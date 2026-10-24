@@ -1,0 +1,47 @@
+# ==============================================================================
+# OXYGEN DUEL PLUGIN - PTERODACTYL & PETRO DB INTEGRATION GUIDE
+# ==============================================================================
+# Copy and update the 'database' section in:
+#   /plugins/Oxygen/config.yml
+# on your Pterodactyl Minecraft Server.
+# ==============================================================================
+
+database:
+  # Enable database syncing (writes player stats, Elo, kits, arenas to MySQL)
+  enabled: true
+  type: "MYSQL"
+  pool-size: 4
+  max-queue: 10000
+
+  sqlite:
+    file: "oxygen.db"
+
+  mysql:
+    # 1. Fill in the MySQL host provided by your Pterodactyl Databases tab
+    # (Often an IP like 127.0.0.1, or a hostname like mysql.example.com)
+    host: "127.0.0.1"
+    port: 3306
+
+    # 2. Database Name from Pterodactyl panel
+    database: "s1_oxygen_db"
+
+    # 3. Dedicated Database Username from Pterodactyl panel
+    username: "u1_oxygen"
+
+    # 4. Password from Pterodactyl panel
+    password: "your_petro_db_password_here"
+
+    # 5. Security options
+    ssl: false
+    verify-server-certificate: false
+    allow-public-key-retrieval: true
+    tls-protocols: "TLSv1.2,TLSv1.3"
+    connection-timeout-ms: 10000
+    socket-timeout-ms: 30000
+    keepalive-interval-seconds: 45
+
+# Optional: If you also want Oxygen's built-in web server to run alongside:
+web:
+  enabled: false
+  port: 8080
+  bind: "127.0.0.1"

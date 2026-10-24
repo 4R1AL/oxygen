@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arenas Showcase | Oxygen PvP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .grid-container {
+            max-width: 1200px;
+            margin: 2rem auto 4rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .arena-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            transition: all 0.2s ease-in-out;
+        }
+        .arena-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-glow);
+            box-shadow: var(--accent-glow);
+        }
+        .arena-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .arena-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+        .arena-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+        }
+        .modes-list {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .mode-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="logo-group">
+            <div class="logo-icon">⚔</div>
+            <div class="logo-text">Oxygen PvP</div>
+        </a>
+
+        <nav class="nav-links">
+            <a class="nav-link" href="index.html">Leaderboard</a>
+            <a class="nav-link" href="kits.html">Official Kits</a>
+            <a class="nav-link active" href="arenas.html">Arenas</a>
+        </nav>
+
+        <div class="server-ip-pill" onclick="copyServerIp()" title="Click to copy server IP">
+            <span class="server-status-dot" id="statusDot"></span>
+            <span id="ipText">play.samratnagarkoti.com.np</span>
+            <span style="color: var(--text-dim); font-size: 0.75rem;">📋</span>
+        </div>
+    </header>
+
+    <section class="hero-section" style="padding-bottom: 0.5rem;">
+        <div class="hero-banner">
+            <div>
+                <h1 class="hero-title">Official <span>Battle Arenas</span></h1>
+                <p class="hero-subtitle">High-FPS optimized duel zones with instant sub-tick block rollback and entity sweeping powered by Oxygen.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="grid-container" id="arenasGrid">
+        <!-- Rendered dynamically -->
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <footer class="footer">
+        <p>Oxygen PvP Network &copy; 2026 &bull; Domain: <span style="color: var(--accent-cyan);">samratnagarkoti.com.np</span></p>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script>
+        const sampleArenas = [
+            { name: 'colosseum', displayName: 'Roman Colosseum', desc: 'Ancient stone arena featuring high pillars and unobstructed flat center.', modes: ['1v1', 'Party', 'Rounds'] },
+            { name: 'cyber_void', displayName: 'Cyber Void', desc: 'Futuristic neon matrix arena with glass platforms and boundary safeguards.', modes: ['1v1', 'Bot Practice'] },
+            { name: 'obsidian_core', displayName: 'Obsidian Core', desc: 'Reinforced volcanic duel chamber specially engineered for Crystal PvP & explosions.', modes: ['1v1', 'FFA', 'Party'] },
+            { name: 'glacier_peak', displayName: 'Glacier Peak', desc: 'High-visibility frozen arena with packed ice perimeter and snow cover.', modes: ['1v1', 'Sumo'] }
+        ];
+
+        async function loadArenas() {
+            const grid = document.getElementById('arenasGrid');
+            const apiBase = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.apiBaseUrl : 'http://localhost:3001';
+
+            try {
+                const res = await fetch(`${apiBase}/api/arenas`, { signal: AbortSignal.timeout(3000) });
+                if (!res.ok) throw new Error();
+                const arenas = await res.json();
+                renderArenas(arenas.length > 0 ? arenas : sampleArenas);
+            } catch (e) {
+                renderArenas(sampleArenas);
+            }
+        }
+
+        function renderArenas(arenas) {
+            const grid = document.getElementById('arenasGrid');
+            let html = '';
+            arenas.forEach(a => {
+                const modes = a.modes || ['1v1'];
+                const chips = modes.map(m => `<span class="mode-chip">${m}</span>`).join('');
+                html += `
+                    <div class="arena-card">
+                        <span class="arena-badge">Instant Rollback Active</span>
+                        <h3 class="arena-title">${a.displayName || a.name}</h3>
+                        <p class="arena-desc">${a.desc || 'High-performance combat arena with verified boundary protection.'}</p>
+                        <div class="modes-list">${chips}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-dim); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem;">
+                            Status: <span style="color: #10b981; font-weight: 600;">Available for Matchmaking</span>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function copyServerIp() {
+            const ip = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.serverIp : 'play.samratnagarkoti.com.np';
+            navigator.clipboard.writeText(ip).then(() => {
+                const toast = document.getElementById('toast');
+                toast.innerText = `Copied ${ip} to clipboard!`;
+                toast.style.display = 'block';
+                setTimeout(() => toast.style.display = 'none', 2800);
+            });
+        }
+
+        window.onload = loadArenas;
+    </script>
+</body>
+</html>

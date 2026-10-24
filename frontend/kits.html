@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Kits | Oxygen PvP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .grid-container {
+            max-width: 1200px;
+            margin: 2rem auto 4rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 1.5rem;
+        }
+        .kit-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .kit-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-glow);
+            box-shadow: var(--accent-glow);
+        }
+        .kit-icon-box {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--border-glow);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .kit-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        .kit-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+        }
+        .kit-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 0.85rem;
+            font-size: 0.8rem;
+        }
+        .mode-tag {
+            background: rgba(79, 172, 254, 0.15);
+            color: var(--accent-blue);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="logo-group">
+            <div class="logo-icon">⚔</div>
+            <div class="logo-text">Oxygen PvP</div>
+        </a>
+
+        <nav class="nav-links">
+            <a class="nav-link" href="index.html">Leaderboard</a>
+            <a class="nav-link active" href="kits.html">Official Kits</a>
+            <a class="nav-link" href="arenas.html">Arenas</a>
+        </nav>
+
+        <div class="server-ip-pill" onclick="copyServerIp()" title="Click to copy server IP">
+            <span class="server-status-dot" id="statusDot"></span>
+            <span id="ipText">play.samratnagarkoti.com.np</span>
+            <span style="color: var(--text-dim); font-size: 0.75rem;">📋</span>
+        </div>
+    </header>
+
+    <section class="hero-section" style="padding-bottom: 0.5rem;">
+        <div class="hero-banner">
+            <div>
+                <h1 class="hero-title">Official <span>Duel Kits</span></h1>
+                <p class="hero-subtitle">Explore tournament-standard kits configured in Oxygen. All ranked matches follow strict fair-play anti-exploit rules.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="grid-container" id="kitsGrid">
+        <!-- Rendered dynamically -->
+    </div>
+
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <footer class="footer">
+        <p>Oxygen PvP Network &copy; 2026 &bull; Domain: <span style="color: var(--accent-cyan);">samratnagarkoti.com.np</span></p>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script>
+        const kitDescriptions = {
+            'nodebuff': { desc: 'Classic competitive diamond armor with splash healing potions, speed II, and fire resistance.', icon: '🧪' },
+            'boxing': { desc: 'Fast-paced hit-counter duel. First player to reach 100 consecutive hits wins.', icon: '🥊' },
+            'gapple': { desc: 'Prot IV gear with notch golden apples and strength potions. Endurance PvP combat.', icon: '🍏' },
+            'crystal': { desc: 'High-speed End Crystal and Respawn Anchor explosions with obsidian placement.', icon: '🔮' },
+            'combo': { desc: 'Zero knockback cooldown with instant clicks. Launch your opponent into flight.', icon: '⚡' },
+            'builduhc': { desc: 'Tactical UHC combat with lava buckets, water buckets, golden heads, and cobwebs.', icon: '🌋' },
+            'sumo': { desc: 'No weapons or damage. Knock your rival completely off the elevated platform.', icon: '🥋' },
+            'elytra': { desc: 'High-altitude aerial dogfights utilizing firework rockets and crossbow arrows.', icon: '🪽' }
+        };
+
+        async function loadKitsGrid() {
+            const grid = document.getElementById('kitsGrid');
+            const apiBase = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.apiBaseUrl : 'http://localhost:3001';
+            
+            try {
+                const res = await fetch(`${apiBase}/api/kits`, { signal: AbortSignal.timeout(3000) });
+                if (!res.ok) throw new Error();
+                const kits = await res.json();
+                renderKits(kits);
+            } catch (e) {
+                // Default fallback kits
+                renderKits([
+                    { name: 'nodebuff', displayName: 'NoDebuff', vanillaMode: false },
+                    { name: 'boxing', displayName: 'Boxing', vanillaMode: false },
+                    { name: 'gapple', displayName: 'Gapple', vanillaMode: true },
+                    { name: 'crystal', displayName: 'Crystal PvP', vanillaMode: true },
+                    { name: 'combo', displayName: 'Combo', vanillaMode: false },
+                    { name: 'builduhc', displayName: 'BuildUHC', vanillaMode: true },
+                    { name: 'sumo', displayName: 'Sumo', vanillaMode: false },
+                    { name: 'elytra', displayName: 'Elytra Firework', vanillaMode: true }
+                ]);
+            }
+        }
+
+        function renderKits(kits) {
+            const grid = document.getElementById('kitsGrid');
+            let html = '';
+            kits.forEach(k => {
+                const meta = kitDescriptions[k.name.toLowerCase()] || { desc: 'Tournament standardized competitive kit.', icon: '⚔' };
+                html += `
+                    <div class="kit-card">
+                        <div class="kit-icon-box">${meta.icon}</div>
+                        <h3 class="kit-title">${k.displayName || k.name}</h3>
+                        <p class="kit-desc">${meta.desc}</p>
+                        <div class="kit-meta">
+                            <span class="mode-tag">${k.vanillaMode ? 'Vanilla Mechanics' : 'Custom Combat'}</span>
+                            <span class="mono" style="color: var(--accent-cyan); font-weight: 600;">Ranked / Casual</span>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function copyServerIp() {
+            const ip = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.serverIp : 'play.samratnagarkoti.com.np';
+            navigator.clipboard.writeText(ip).then(() => {
+                const toast = document.getElementById('toast');
+                toast.innerText = `Copied ${ip} to clipboard!`;
+                toast.style.display = 'block';
+                setTimeout(() => toast.style.display = 'none', 2800);
+            });
+        }
+
+        window.onload = loadKitsGrid;
+    </script>
+</body>
+</html>
