@@ -1161,5 +1161,33 @@
     "kills": 1,
     "deaths": 0,
     "lastModified": "2026-10-25T07:24:40+00:00"
+  },
+  {
+    "uuid": "ff35f2f0-8da8-3fac-a867-acabcf883ced",
+    "name": "abineyyyyy",
+    "elo": null,
+    "kitElo": {},
+    "kitWins": {},
+    "wins": 0,
+    "losses": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0,
+    "kills": 0,
+    "deaths": 0,
+    "lastModified": "2026-10-25T16:23:16+00:00"
+  },
+  {
+    "uuid": "7a8f4f19-3c72-3720-aa5b-2f2e4374584b",
+    "name": "secretishere",
+    "elo": null,
+    "kitElo": {},
+    "kitWins": {},
+    "wins": 0,
+    "losses": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0,
+    "kills": 0,
+    "deaths": 0,
+    "lastModified": "2026-10-25T16:38:01+00:00"
   }
 ]
