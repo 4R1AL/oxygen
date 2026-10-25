@@ -155,7 +155,7 @@ footer{text-align:center;color:var(--muted);padding:20px 16px 28px;font-size:13p
 <div class="lad" id="lad"></div></section></div>
 <div class="md" id="md" hidden><div class="mc" role="dialog" aria-modal="true" aria-labelledby="mn"><button class="x" id="mx" aria-label="Close">×</button><div id="mb"></div></div></div>
 <footer>🇳🇵 Oxygen PvP Duels · Minecraft Nepal Network (<span style="color:var(--crimson);font-weight:700;">mcnp.network</span>) · Real-time competitive ranks & stats.</footer>
-<script src="js/config.js"></script>
+<script src="js/config.js?v=20261025_mcnp"></script>
 <script>
 
 const P={
@@ -1697,22 +1697,14 @@ function draw(){
      return;
    }
 
-   if (!q && kitDuelists.length >= 3) {
-     const o = [1, 0, 2];
-     hero.innerHTML = '<div class="pod3">' + o.map(k => {
-       const p = kitDuelists[k];
-       if (!p) return '';
-       const pts = p.pts[cur], i = rankIdx(pts), c = TH[i];
-       return `<div class="pp p${k+1}" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile"><span class="pos">#${k+1}</span>${k===0?'<span class="sm">SUMMIT</span>':''}<div class="hd">${mkHead(p.n)}</div><div class="bd">${bd(i)}</div><b>${p.n}</b><small style=\"font-weight:700;color:var(--text);\">${c.name}</small><small>${pts} Elo · ${c.label}</small></div>`;
-     }).join('') + '</div>';
-   } else if (!q && kitDuelists.length > 0) {
-     const p = kitDuelists[0], pts = p.pts[cur], i = rankIdx(pts);
-     hero.innerHTML = `<div class="hero" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile">${HM}${EM}<div class="hl"><span class="sm">SUMMIT · #1</span><div class="hh"><span class="hf">${mkHead(p.n)}</span><div><b>${p.n}</b><small>${TH[i].name}</small></div></div><div class="alt"><strong>${pts}</strong> Elo<small>${TH[i].name} · ${TH[i].label}</small></div></div><div class="hb bd">${bd(i)}</div></div>`;
+   if (!q && kitDuelists.length > 0) {
+     const p = kitDuelists[0], pts = p.pts[cur], i = rankIdx(pts), c = TH[i];
+     hero.innerHTML = `<div class="hero" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile">${HM}${EM}<div class="hl"><span class="sm">SUMMIT · #1</span><div class="hh"><span class="hf">${mkHead(p.n)}</span><div><b>${p.n}</b><small style="font-weight:700;">${c.name}</small></div></div><div class="alt"><strong>${pts}</strong> Elo<small>${c.name} · ${c.label} (${alt(pts)} m)</small></div></div><div class="hb bd">${bd(i)}</div></div>`;
    } else {
      hero.innerHTML = '';
    }
 
-   const minIdx = (!q && kitDuelists.length >= 3) ? 3 : (!q && kitDuelists.length > 0) ? 1 : 0;
+   const minIdx = (!q && kitDuelists.length > 0) ? 1 : 0;
    const cards = kitDuelists.slice(minIdx);
 
    if (cards.length > 0) {
@@ -1722,7 +1714,7 @@ function draw(){
        const base = (c.pts === 0) ? 1000 : c.pts;
        const target = nx ? nx.pts : 3100;
        const f = nx ? Math.max(0, Math.min(100, Math.round((pts - base) / ((target - base) || 1) * 100))) : 100;
-       return `<div class="pcard" style="--acc:${k===1?'#c5cdd6':k===2?'#cd7f32':MATC[c.m]}" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile"><span class="pos${k===1?' s2':k===2?' s3':''}">#${k+1}</span><span class="pf">${mkHead(p.n)}</span><div class="pi"><b>${p.n}</b><small>${c.name}</small><div class="el" title="${nx?f+'% to '+nx.name:'Max rank'}"><i style="width:${f}%"></i></div><small style="font-weight:600;color:var(--text);">${c.name} · ${pts} Elo</small><div class="el" title="${nx?f+'% to '+nx.name:'Max rank'}"><i style="width:${f}%"></i></div><small style="color:var(--muted);">${alt(pts)} m · ${c.label}</small></div><span class="pb bd">${bd(i)}</span></div>`;
+       return `<div class="pcard" style="--acc:${k===1?'#c5cdd6':k===2?'#cd7f32':MATC[c.m]}" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile"><span class="pos${k===1?' s2':k===2?' s3':''}">#${k+1}</span><span class="pf">${mkHead(p.n)}</span><div class="pi"><b>${p.n}</b><small style="font-weight:600;color:var(--text);">${c.name} · ${pts} Elo</small><div class="el" title="${nx?f+'% to '+nx.name:'Max rank'}"><i style="width:${f}%"></i></div><small style="color:var(--muted);">${alt(pts)} m · ${c.label}</small></div><span class="pb bd">${bd(i)}</span></div>`;
      }).join('');
    } else {
      listEl.innerHTML = '';
@@ -1877,9 +1869,11 @@ async function syncWithOxygenApi(){
             if(liveDuelists && liveDuelists.length > 0){
                 const liveMap = new Map();
                 liveDuelists.forEach(d => liveMap.set(d.name.toLowerCase(), d));
+                const seen = new Set();
                 PL = PL.map(p => {
                     const d = liveMap.get(p.name.toLowerCase());
                     if (d) {
+                        seen.add(d.name.toLowerCase());
                         return {
                             n: d.name,
                             uuid: d.uuid,
@@ -1899,6 +1893,26 @@ async function syncWithOxygenApi(){
                     }
                     return p;
                 });
+                for (const d of liveDuelists) {
+                    if (!seen.has(d.name.toLowerCase())) {
+                        PL.push({
+                            n: d.name,
+                            uuid: d.uuid,
+                            name: d.name,
+                            elo: d.elo,
+                            isRanked: d.isRanked !== undefined ? d.isRanked : (d.elo !== null),
+                            pts: d.pts || {},
+                            kills: d.kills || 0,
+                            deaths: d.deaths || 0,
+                            kd: d.kd || 0,
+                            wins: d.wins || 0,
+                            losses: d.losses || 0,
+                            winRate: d.winRate || 0,
+                            winStreak: d.winStreak || 0,
+                            bestWinStreak: d.bestWinStreak || 0
+                        });
+                    }
+                }
                 draw();
             }
         }
@@ -1908,7 +1922,7 @@ async function syncWithOxygenApi(){
 }
 
 function copyServerIp(){
-    const ip = (window.OXYGEN_CONFIG && window.OXYGEN_CONFIG.serverIp) || 'mcnp.network';
+    const ip = 'mcnp.network';
     navigator.clipboard.writeText(ip).then(()=>{
         const toast = document.getElementById('toast');
         if(toast){
@@ -1926,7 +1940,13 @@ draw();
 syncWithOxygenApi();
 setInterval(syncWithOxygenApi, 12000);
 
-const initialPlayer = new URLSearchParams(window.location.search).get('player');
+const urlParams = new URLSearchParams(window.location.search);
+const initialMode = urlParams.get('mode') || urlParams.get('kit');
+if (initialMode && MODES.some(m => m[0] === initialMode.toLowerCase())) {
+  cur = initialMode.toLowerCase();
+  draw();
+}
+const initialPlayer = urlParams.get('player');
 if (initialPlayer) {
   showP(initialPlayer);
 }

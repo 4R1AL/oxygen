@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
+import { getAllCachedPlayers } from './sync.js';
 
 dotenv.config();
 
@@ -98,6 +99,10 @@ function normalizeKit(name: string): string {
 }
 
 function loadOxygenCache(): any[] {
+  const memList = getAllCachedPlayers();
+  if (memList && memList.length > 0) {
+    return memList;
+  }
   try {
     const candidates = [
       path.resolve(process.cwd(), '../functions/api/oxygen_players_cache.json'),

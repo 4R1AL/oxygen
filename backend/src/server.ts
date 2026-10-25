@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { testDbConnection } from './db.js';
+import { startLiveSyncDaemon } from './sync.js';
 import { statusRouter } from './routes/status.js';
 import { statsRouter } from './routes/stats.js';
 import { leaderboardRouter } from './routes/leaderboard.js';
@@ -71,6 +72,7 @@ async function start() {
   console.log('----------------------------------------------------');
 
   await testDbConnection();
+  startLiveSyncDaemon(30000);
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Oxygen Duels REST API running at: http://localhost:${PORT}`);

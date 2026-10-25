@@ -111,7 +111,7 @@
         <p>Oxygen PvP Network &copy; 2026 &bull; Domain: <span style="color: var(--accent-cyan);">mcnp.network</span></p>
     </footer>
 
-    <script src="js/config.js"></script>
+    <script src="js/config.js?v=20261025_mcnp"></script>
     <script>
         const sampleArenas = [
             { name: 'colosseum', displayName: 'Roman Colosseum', desc: 'Ancient stone arena featuring high pillars and unobstructed flat center.', modes: ['1v1', 'Party', 'Rounds'] },
@@ -156,7 +156,7 @@
         }
 
         function copyServerIp() {
-            const ip = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.serverIp : 'mcnp.network';
+            const ip = 'mcnp.network';
             navigator.clipboard.writeText(ip).then(() => {
                 const toast = document.getElementById('toast');
                 toast.innerText = `Copied ${ip} to clipboard!`;
