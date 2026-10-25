@@ -4,9 +4,9 @@
 const CONFIG = {
   // Brand details
   serverName: "Oxygen PvP Nepal",
-  serverIp: "play.samratnagarkoti.com.np",
+  serverIp: "mcnp.network",
   discordUrl: "https://discord.gg/",
-  storeUrl: "https://store.samratnagarkoti.com.np",
+  storeUrl: "https://store.mcnp.network",
 
   // API Base URL:
   // When deployed on Cloudflare Pages, functions are served directly under /api/*

@@ -89,7 +89,7 @@
 
         <div class="server-ip-pill" onclick="copyServerIp()" title="Click to copy server IP">
             <span class="server-status-dot" id="statusDot"></span>
-            <span id="ipText">play.samratnagarkoti.com.np</span>
+            <span id="ipText">mcnp.network</span>
             <span style="color: var(--text-dim); font-size: 0.75rem;">📋</span>
         </div>
     </header>
@@ -110,7 +110,7 @@
     <div class="toast" id="toast">Copied to clipboard!</div>
 
     <footer class="footer">
-        <p>Oxygen PvP Network &copy; 2026 &bull; Domain: <span style="color: var(--accent-cyan);">samratnagarkoti.com.np</span></p>
+        <p>Oxygen PvP Network &copy; 2026 &bull; Domain: <span style="color: var(--accent-cyan);">mcnp.network</span></p>
     </footer>
 
     <script src="js/config.js"></script>
@@ -171,7 +171,7 @@
         }
 
         function copyServerIp() {
-            const ip = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.serverIp : 'play.samratnagarkoti.com.np';
+            const ip = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.serverIp : 'mcnp.network';
             navigator.clipboard.writeText(ip).then(() => {
                 const toast = document.getElementById('toast');
                 toast.innerText = `Copied ${ip} to clipboard!`;

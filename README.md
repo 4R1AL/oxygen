@@ -1,6 +1,6 @@
 # ⚔ Oxygen Duel Web Integration & Dashboard
 
-Modern, esports-themed web integration for the **Oxygen Minecraft Duel Plugin**, deployed on **Cloudflare Pages** for domain [`samratnagarkoti.com.np`](https://samratnagarkoti.com.np) and connected to your **Pterodactyl MySQL Database (Petro DB)** and **Pterodactyl Minecraft Server**.
+Modern, esports-themed web integration for the **Oxygen Minecraft Duel Plugin**, deployed on **Cloudflare Pages** for domain [`mcnp.network`](https://mcnp.network) and connected to your **Pterodactyl MySQL Database (Petro DB)** and **Pterodactyl Minecraft Server**.
 
 ---
 
@@ -8,7 +8,7 @@ Modern, esports-themed web integration for the **Oxygen Minecraft Duel Plugin**,
 
 ```
                         ┌───────────────────────────────────────┐
-                        │      samratnagarkoti.com.np           │
+                        │      mcnp.network           │
                         │    (Cloudflare Pages CDN)             │
                         │   - Live Leaderboard (Elo, Wins)      │
                         │   - Kits & Arenas Showcase            │
@@ -18,7 +18,7 @@ Modern, esports-themed web integration for the **Oxygen Minecraft Duel Plugin**,
                                            │  REST API Calls
                                            ▼
                         ┌───────────────────────────────────────┐
-                        │       api.samratnagarkoti.com.np      │
+                        │       api.mcnp.network      │
                         │      (Oxygen REST API Backend)        │
                         │   - Node.js / Express / TypeScript    │
                         │   - Server List Ping (SLP) Socket     │
@@ -112,13 +112,13 @@ Save and restart the server (or run `/oxygen reload`). The plugin will automatic
 2. Edit `.env` with your Petro DB credentials:
    ```env
    PORT=3001
-   CORS_ORIGIN=https://samratnagarkoti.com.np,https://*.pages.dev,*
+   CORS_ORIGIN=https://mcnp.network,https://*.pages.dev,*
    DB_HOST=YOUR_PETRO_DB_HOST
    DB_PORT=3306
    DB_USER=YOUR_PETRO_DB_USER
    DB_PASSWORD=YOUR_PETRO_DB_PASSWORD
    DB_NAME=YOUR_PETRO_DB_NAME
-   MINECRAFT_HOST=play.samratnagarkoti.com.np
+   MINECRAFT_HOST=mcnp.network
    MINECRAFT_PORT=25565
    ```
 3. Test seeding (optional, creates initial test records if starting fresh):
@@ -152,15 +152,15 @@ Save and restart the server (or run `/oxygen reload`). The plugin will automatic
      - Build output directory: `frontend`
    - Click **Save and Deploy**.
 3. Under **Custom Domains** in Cloudflare Pages:
-   - Add `samratnagarkoti.com.np` (and `www.samratnagarkoti.com.np`).
+   - Add `mcnp.network` (and `www.mcnp.network`).
 4. Set your API domain:
-   - In `frontend/js/config.js`, verify `apiBaseUrl` points to `https://api.samratnagarkoti.com.np`.
+   - In `frontend/js/config.js`, verify `apiBaseUrl` points to `https://api.mcnp.network`.
 
 ---
 
 ## 🌐 Cloudflare DNS Configuration
 
-In your Cloudflare DNS tab for `samratnagarkoti.com.np`:
+In your Cloudflare DNS tab for `mcnp.network`:
 
 | Type | Name | Content / Target | Proxy Status | Description |
 | :--- | :--- | :--- | :--- | :--- |

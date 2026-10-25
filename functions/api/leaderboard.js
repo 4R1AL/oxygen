@@ -1,33 +1,13 @@
 // Cloudflare Pages Function - Live Oxygen Duels Leaderboard
 const exactPlayers = [
   {
-    "n": "Ah_duo",
-    "uuid": "b7c66994-84ca-4534-a650-39de3972c9cf",
-    "name": "Ah_duo",
-    "elo": 1000,
-    "isRanked": true,
-    "pts": {
-      "overall": 1000,
-      "sword": 950,
-      "creeper": 1027
-    },
-    "kills": 24,
-    "deaths": 30,
-    "kd": 0.8,
-    "wins": 10,
-    "losses": 12,
-    "winRate": 45.5,
-    "winStreak": 2,
-    "bestWinStreak": 7
-  },
-  {
     "n": "TheBihanOG",
     "uuid": "de540fad-c62b-34f3-b1ad-339ff7d4f4d3",
     "name": "TheBihanOG",
-    "elo": 1000,
+    "elo": 1050,
     "isRanked": true,
     "pts": {
-      "overall": 1000,
+      "overall": 1050,
       "sword": 1050
     },
     "kills": 13,
@@ -43,10 +23,10 @@ const exactPlayers = [
     "n": "Ninja_0769",
     "uuid": "85e40426-25e2-34b5-adfd-ec2cca361c27",
     "name": "Ninja_0769",
-    "elo": 1000,
+    "elo": 1021,
     "isRanked": true,
     "pts": {
-      "overall": 1000,
+      "overall": 1021,
       "ogvanilla": 1014,
       "creeper": 1027
     },
@@ -60,52 +40,13 @@ const exactPlayers = [
     "bestWinStreak": 6
   },
   {
-    "n": "NotCrateofficial",
-    "uuid": "9c0902c4-580c-369d-811b-b37b6fb827f4",
-    "name": "NotCrateofficial",
-    "elo": 1000,
-    "isRanked": true,
-    "pts": {
-      "overall": 1000,
-      "sword": 1012
-    },
-    "kills": 21,
-    "deaths": 7,
-    "kd": 3,
-    "wins": 5,
-    "losses": 0,
-    "winRate": 100,
-    "winStreak": 5,
-    "bestWinStreak": 5
-  },
-  {
-    "n": "BipuLL",
-    "uuid": "03002de6-28ae-4c77-924e-3ec46832c0ea",
-    "name": "BipuLL",
-    "elo": 1000,
-    "isRanked": true,
-    "pts": {
-      "overall": 1000,
-      "sword": 969,
-      "creeper": 973
-    },
-    "kills": 8,
-    "deaths": 11,
-    "kd": 0.73,
-    "wins": 2,
-    "losses": 7,
-    "winRate": 22.2,
-    "winStreak": 0,
-    "bestWinStreak": 1
-  },
-  {
     "n": "UjwalRai",
     "uuid": "56f8daa9-a0ba-41dc-bd22-ecee60d12157",
     "name": "UjwalRai",
-    "elo": 1000,
+    "elo": 1013,
     "isRanked": true,
     "pts": {
-      "overall": 1000,
+      "overall": 1013,
       "creeper": 1013
     },
     "kills": 2,
@@ -118,67 +59,52 @@ const exactPlayers = [
     "bestWinStreak": 2
   },
   {
-    "n": "SeniorGaurab626",
-    "uuid": "f789576b-5eea-36be-8d6e-43edd8c9690e",
-    "name": "SeniorGaurab626",
-    "elo": 1000,
+    "n": "NotCrateofficial",
+    "uuid": "9c0902c4-580c-369d-811b-b37b6fb827f4",
+    "name": "NotCrateofficial",
+    "elo": 1012,
     "isRanked": true,
     "pts": {
-      "overall": 1000
+      "overall": 1012,
+      "sword": 1012
     },
-    "kills": 4,
-    "deaths": 5,
+    "kills": 21,
+    "deaths": 7,
+    "kd": 3,
+    "wins": 5,
+    "losses": 0,
+    "winRate": 100,
+    "winStreak": 5,
+    "bestWinStreak": 5
+  },
+  {
+    "n": "Ah_duo",
+    "uuid": "b7c66994-84ca-4534-a650-39de3972c9cf",
+    "name": "Ah_duo",
+    "elo": 989,
+    "isRanked": true,
+    "pts": {
+      "overall": 989,
+      "sword": 950,
+      "creeper": 1027
+    },
+    "kills": 24,
+    "deaths": 30,
     "kd": 0.8,
-    "wins": 0,
-    "losses": 0,
-    "winRate": 0,
-    "winStreak": 0,
-    "bestWinStreak": 0
-  },
-  {
-    "n": "Indra",
-    "uuid": "cfae0b4d-53d2-33f7-82d4-403452f3666b",
-    "name": "Indra",
-    "elo": 1000,
-    "isRanked": true,
-    "pts": {
-      "overall": 1000
-    },
-    "kills": 1,
-    "deaths": 8,
-    "kd": 0.13,
-    "wins": 0,
-    "losses": 0,
-    "winRate": 0,
-    "winStreak": 0,
-    "bestWinStreak": 0
-  },
-  {
-    "n": "CelestialArc_",
-    "uuid": "311d99f8-a2e5-3b8b-bfe6-f08bc7c7caa4",
-    "name": "CelestialArc_",
-    "elo": 1000,
-    "isRanked": true,
-    "pts": {
-      "overall": 1000
-    },
-    "kills": 0,
-    "deaths": 6,
-    "kd": 0,
-    "wins": 0,
-    "losses": 3,
-    "winRate": 0,
-    "winStreak": 0,
-    "bestWinStreak": 0
+    "wins": 10,
+    "losses": 12,
+    "winRate": 45.5,
+    "winStreak": 2,
+    "bestWinStreak": 7
   },
   {
     "n": "Mathsikni",
     "uuid": "856f71e3-4135-4e2f-a018-cfd6cda37f90",
     "name": "Mathsikni",
-    "elo": 1000,
+    "elo": 980,
     "isRanked": true,
     "pts": {
-      "overall": 1000,
+      "overall": 980,
       "ogvanilla": 986,
       "creeper": 973
     },
@@ -192,14 +118,32 @@ const exactPlayers = [
     "bestWinStreak": 0
   },
   {
+    "n": "BipuLL",
+    "uuid": "03002de6-28ae-4c77-924e-3ec46832c0ea",
+    "name": "BipuLL",
+    "elo": 971,
+    "isRanked": true,
+    "pts": {
+      "overall": 971,
+      "sword": 969,
+      "creeper": 973
+    },
+    "kills": 8,
+    "deaths": 11,
+    "kd": 0.73,
+    "wins": 2,
+    "losses": 7,
+    "winRate": 22.2,
+    "winStreak": 0,
+    "bestWinStreak": 1
+  },
+  {
     "n": "_1_1_1_1_1",
     "uuid": "2c8a1b68-41c8-4ee1-8271-cfb01d8fe38c",
     "name": "_1_1_1_1_1",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -215,9 +159,7 @@ const exactPlayers = [
     "name": ".ankitshrr",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -233,9 +175,7 @@ const exactPlayers = [
     "name": ".dhanush_xd2472",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -251,9 +191,7 @@ const exactPlayers = [
     "name": "9Au7",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -269,9 +207,7 @@ const exactPlayers = [
     "name": "Abhishekffll",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -287,9 +223,7 @@ const exactPlayers = [
     "name": "ajit86",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -305,9 +239,7 @@ const exactPlayers = [
     "name": "alex",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -323,9 +255,7 @@ const exactPlayers = [
     "name": "Anspeedyy",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -341,9 +271,7 @@ const exactPlayers = [
     "name": "ArlosTheKnignt",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -359,9 +287,7 @@ const exactPlayers = [
     "name": "bangbangxluffy",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -372,14 +298,28 @@ const exactPlayers = [
     "bestWinStreak": 0
   },
   {
+    "n": "CelestialArc_",
+    "uuid": "311d99f8-a2e5-3b8b-bfe6-f08bc7c7caa4",
+    "name": "CelestialArc_",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 6,
+    "kd": 0,
+    "wins": 0,
+    "losses": 3,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
     "n": "Cinder",
     "uuid": "4179afcd-d3ad-3b46-82dd-065936a68d39",
     "name": "Cinder",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -395,9 +335,7 @@ const exactPlayers = [
     "name": "d0n",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -413,9 +351,7 @@ const exactPlayers = [
     "name": "DADA_1",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -431,9 +367,7 @@ const exactPlayers = [
     "name": "DARK_GOD",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -449,9 +383,7 @@ const exactPlayers = [
     "name": "Dark_loop",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -467,9 +399,7 @@ const exactPlayers = [
     "name": "Dipsahn_",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -485,9 +415,7 @@ const exactPlayers = [
     "name": "dipson_spider4",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -503,9 +431,7 @@ const exactPlayers = [
     "name": "Dipson9853",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -521,9 +447,7 @@ const exactPlayers = [
     "name": "Dr_fighter",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -539,9 +463,7 @@ const exactPlayers = [
     "name": "Drizzly_Scout",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -557,9 +479,7 @@ const exactPlayers = [
     "name": "Galaxyyyy",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -575,12 +495,26 @@ const exactPlayers = [
     "name": "HuntPepsi",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
+    "n": "Indra",
+    "uuid": "cfae0b4d-53d2-33f7-82d4-403452f3666b",
+    "name": "Indra",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 1,
+    "deaths": 8,
+    "kd": 0.13,
     "wins": 0,
     "losses": 0,
     "winRate": 0,
@@ -593,9 +527,7 @@ const exactPlayers = [
     "name": "ItsMeNOT_OG",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -611,9 +543,7 @@ const exactPlayers = [
     "name": "JODxREXYY",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -629,9 +559,7 @@ const exactPlayers = [
     "name": "Lokabhai09",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -647,9 +575,7 @@ const exactPlayers = [
     "name": "Manzileyy4",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -665,9 +591,7 @@ const exactPlayers = [
     "name": "mehhh",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -683,9 +607,7 @@ const exactPlayers = [
     "name": "mightbehehe",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -701,9 +623,7 @@ const exactPlayers = [
     "name": "Neervic_Plays",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -719,9 +639,7 @@ const exactPlayers = [
     "name": "nirajraya98",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -737,9 +655,7 @@ const exactPlayers = [
     "name": "Not_Aayush",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -755,9 +671,7 @@ const exactPlayers = [
     "name": "NotYourNep_",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -773,9 +687,7 @@ const exactPlayers = [
     "name": "Npl_SpideY07",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -791,9 +703,7 @@ const exactPlayers = [
     "name": "NuGolu",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -809,9 +719,7 @@ const exactPlayers = [
     "name": "Nullx2",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -827,9 +735,7 @@ const exactPlayers = [
     "name": "Prasan",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -845,9 +751,7 @@ const exactPlayers = [
     "name": "RealLyrikal_",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -863,9 +767,7 @@ const exactPlayers = [
     "name": "rizan",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -881,9 +783,7 @@ const exactPlayers = [
     "name": "RohitPROO2012",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -899,9 +799,7 @@ const exactPlayers = [
     "name": "Ronikcol",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -917,9 +815,7 @@ const exactPlayers = [
     "name": "rrgod1",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -935,9 +831,7 @@ const exactPlayers = [
     "name": "Sagar_mad_gamer",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -953,12 +847,26 @@ const exactPlayers = [
     "name": "Sanim_Op",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
+    "n": "SeniorGaurab626",
+    "uuid": "f789576b-5eea-36be-8d6e-43edd8c9690e",
+    "name": "SeniorGaurab626",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 4,
+    "deaths": 5,
+    "kd": 0.8,
     "wins": 0,
     "losses": 0,
     "winRate": 0,
@@ -971,9 +879,7 @@ const exactPlayers = [
     "name": "SenpqiSpider",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -989,9 +895,7 @@ const exactPlayers = [
     "name": "sohaldahal",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1007,9 +911,7 @@ const exactPlayers = [
     "name": "SumanGod",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1025,9 +927,7 @@ const exactPlayers = [
     "name": "SUYESH",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1043,9 +943,7 @@ const exactPlayers = [
     "name": "TD_KILLER",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1061,9 +959,7 @@ const exactPlayers = [
     "name": "Teicehe256HD",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1079,9 +975,7 @@ const exactPlayers = [
     "name": "the_god_jonish",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1097,9 +991,7 @@ const exactPlayers = [
     "name": "Thunder001",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1115,9 +1007,7 @@ const exactPlayers = [
     "name": "ujjwal",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1133,9 +1023,7 @@ const exactPlayers = [
     "name": "Uxhimp",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1151,9 +1039,7 @@ const exactPlayers = [
     "name": "Velthrix",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1169,9 +1055,7 @@ const exactPlayers = [
     "name": "Vinsmoke360",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1187,9 +1071,7 @@ const exactPlayers = [
     "name": "Voltzz_Extra",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1205,9 +1087,7 @@ const exactPlayers = [
     "name": "Westnumber666777",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1223,9 +1103,7 @@ const exactPlayers = [
     "name": "WOLF91820",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1241,9 +1119,7 @@ const exactPlayers = [
     "name": "Zen_Blade69",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1259,9 +1135,7 @@ const exactPlayers = [
     "name": "ZeroxBlitz",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1277,9 +1151,7 @@ const exactPlayers = [
     "name": "Zezyh4X",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1295,9 +1167,7 @@ const exactPlayers = [
     "name": "ZiroCC",
     "elo": null,
     "isRanked": false,
-    "pts": {
-      "overall": null
-    },
+    "pts": {},
     "kills": 0,
     "deaths": 0,
     "kd": 0,
@@ -1342,7 +1212,6 @@ export async function onRequest(context) {
   }
 
   if (kit !== "overall") {
-    // Only return players who have ACTUALLY played this gamemode
     const kitPlayers = exactPlayers
       .filter(p => p.pts && p.pts[kit] !== undefined && p.pts[kit] !== null)
       .map(p => {
@@ -1373,7 +1242,6 @@ export async function onRequest(context) {
     else kitPlayers.sort((a, b) => (b.score - a.score) || (b.wins - a.wins) || (b.kills - a.kills));
 
     kitPlayers.forEach((p, idx) => { p.rank = idx + 1; });
-
     return new Response(JSON.stringify(kitPlayers.slice(0, limit)), {
       headers: {
         "Content-Type": "application/json",
@@ -1383,49 +1251,43 @@ export async function onRequest(context) {
     });
   }
 
-  // Overall: Ranked players first, then unranked
-  const list = exactPlayers.map(p => {
-    const elo = p.elo;
-    let score = elo;
-    if (type === "kills") score = p.kills || 0;
-    else if (type === "wins") score = p.wins || 0;
-    else if (type === "streak") score = p.winStreak || 0;
+  // Overall: Only duelists who actually played duels and have an overall Elo are ranked
+  const rankedOverall = exactPlayers
+    .filter(p => p.isRanked && p.elo !== null)
+    .map(p => {
+      let score = p.elo;
+      if (type === "kills") score = p.kills || 0;
+      else if (type === "wins") score = p.wins || 0;
+      else if (type === "streak") score = p.winStreak || 0;
 
-    return {
-      rank: 0,
-      uuid: p.uuid,
-      name: p.name,
-      score,
-      elo,
-      isRanked: p.isRanked,
-      tier: p.isRanked ? getRankTier(elo) : "Unranked",
-      pts: p.pts,
-      wins: p.wins || 0,
-      losses: p.losses || 0,
-      winStreak: p.winStreak || 0,
-      bestWinStreak: p.bestWinStreak || 0,
-      kills: p.kills || 0,
-      deaths: p.deaths || 0,
-      winRate: p.winRate || 0,
-      kd: p.kd || 0
-    };
-  });
+      return {
+        rank: 0,
+        uuid: p.uuid,
+        name: p.name,
+        score,
+        elo: p.elo,
+        isRanked: true,
+        tier: getRankTier(p.elo),
+        pts: p.pts,
+        wins: p.wins || 0,
+        losses: p.losses || 0,
+        winStreak: p.winStreak || 0,
+        bestWinStreak: p.bestWinStreak || 0,
+        kills: p.kills || 0,
+        deaths: p.deaths || 0,
+        winRate: p.winRate || 0,
+        kd: p.kd || 0
+      };
+    });
 
-  list.sort((a, b) => {
-    if (a.isRanked && !b.isRanked) return -1;
-    if (!a.isRanked && b.isRanked) return 1;
-    if (a.isRanked && b.isRanked) {
-      if (type === "kills") return b.kills - a.kills;
-      if (type === "wins") return b.wins - a.wins;
-      if (type === "streak") return b.winStreak - a.winStreak;
-      return (b.elo - a.elo) || (b.wins - a.wins) || (b.kills - a.kills);
-    }
-    return a.name.localeCompare(b.name);
-  });
+  if (type === "kills") rankedOverall.sort((a, b) => b.kills - a.kills);
+  else if (type === "wins") rankedOverall.sort((a, b) => b.wins - a.wins);
+  else if (type === "streak") rankedOverall.sort((a, b) => b.winStreak - a.winStreak);
+  else rankedOverall.sort((a, b) => (b.elo - a.elo) || (b.wins - a.wins) || (b.kills - a.kills));
 
-  list.forEach((p, idx) => { p.rank = p.isRanked ? (idx + 1) : 0; });
+  rankedOverall.forEach((p, idx) => { p.rank = idx + 1; });
 
-  return new Response(JSON.stringify(list.slice(0, limit)), {
+  return new Response(JSON.stringify(rankedOverall.slice(0, limit)), {
     headers: {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",

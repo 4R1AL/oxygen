@@ -6,7 +6,7 @@ let cachedLeaderboard = [];
 let autoRefreshTimer = null;
 
 const apiBase = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.apiBaseUrl : 'http://localhost:3001';
-const serverIp = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.serverIp : 'play.samratnagarkoti.com.np';
+const serverIp = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.serverIp : 'mcnp.network';
 
 function getHeadUrl(uuid, name) {
     if (uuid && uuid.length > 20) {

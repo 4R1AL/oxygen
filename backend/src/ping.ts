@@ -15,9 +15,9 @@ export interface ServerStatusResponse {
   lastChecked: number;
 }
 
-const host = process.env.MINECRAFT_HOST || 'play.samratnagarkoti.com.np';
+const host = process.env.MINECRAFT_HOST || 'mcnp.network';
 const port = parseInt(process.env.MINECRAFT_PORT || '25565', 10);
-const serverName = process.env.SERVER_DISPLAY_NAME || 'Oxygen PvP';
+const serverName = process.env.SERVER_DISPLAY_NAME || 'Minecraft Nepal';
 
 let cachedStatus: ServerStatusResponse = {
   online: false,
@@ -72,7 +72,7 @@ export async function getServerStatus(): Promise<ServerStatusResponse> {
         ...fallbackResult,
         online: isOnline,
         serverName,
-        serverIp: 'play.samratnagarkoti.com.np',
+        serverIp: 'mcnp.network',
         lastChecked: now,
       };
       return cachedStatus;
@@ -95,7 +95,7 @@ export async function getServerStatus(): Promise<ServerStatusResponse> {
       cachedStatus = {
         online: pteroRunning,
         serverName,
-        serverIp: 'play.samratnagarkoti.com.np',
+        serverIp: 'mcnp.network',
         version: '1.21.4',
         onlinePlayers: pteroRunning ? 1 : 0,
         maxPlayers: 100,

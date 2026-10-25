@@ -221,7 +221,19 @@ export async function getTopLeaderboard(
 
   // Overall: Ranked duelists first, then unranked
   const entries: LeaderboardEntry[] = rawPlayers.map((p) => {
-    const hasMatches = (p.wins || 0) + (p.losses || 0) > 0 || (p.kills || 0) > 0 || Object.keys(p.kitElo || {}).length > 0;
+    const kitEloNormalized: Record<string, number> = {};
+    for (const [k, v] of Object.entries(p.kitElo || {})) {
+      if (!k.toLowerCase().startsWith("custom")) {
+        kitEloNormalized[normalizeKit(k)] = v as number;
+      }
+    }
+    const playedKits = Object.keys(kitEloNormalized);
+    const isRanked = playedKits.length > 0;
+    let overallElo: number | null = null;
+    if (isRanked) {
+      const sum = playedKits.reduce((acc, k) => acc + kitEloNormalized[k], 0);
+      overallElo = Math.round(sum / playedKits.length);
+    }
     const kills = p.kills || 0;
     const deaths = p.deaths || 0;
     const wins = p.wins || 0;
@@ -230,14 +242,7 @@ export async function getTopLeaderboard(
     const totalMatches = wins + losses;
     const winRate = totalMatches > 0 ? parseFloat(((wins / totalMatches) * 100).toFixed(1)) : 0.0;
 
-    const overallElo = hasMatches ? (p.elo || 1000) : null;
-
     const pts: Record<string, number | null> = { overall: overallElo };
-    const kitEloNormalized: Record<string, number> = {};
-    for (const [k, v] of Object.entries(p.kitElo || {})) {
-      kitEloNormalized[normalizeKit(k)] = v as number;
-    }
-
     for (const kit of OFFICIAL_KITS) {
       if (kitEloNormalized[kit] !== undefined) {
         pts[kit] = kitEloNormalized[kit];
@@ -245,9 +250,9 @@ export async function getTopLeaderboard(
     }
 
     let score: number | null = overallElo;
-    if (sortType === 'kills') score = kills;
-    else if (sortType === 'wins') score = wins;
-    else if (sortType === 'streak') score = p.winStreak || 0;
+    if (sortType === "kills") score = kills;
+    else if (sortType === "wins") score = wins;
+    else if (sortType === "streak") score = p.winStreak || 0;
 
     return {
       rank: 0,
@@ -255,8 +260,8 @@ export async function getTopLeaderboard(
       name: p.name,
       score,
       elo: overallElo,
-      isRanked: hasMatches,
-      tier: hasMatches ? getRankTier(overallElo) : 'Unranked',
+      isRanked,
+      tier: isRanked ? getRankTier(overallElo) : "Unranked",
       pts,
       wins,
       losses,
@@ -300,8 +305,19 @@ export async function getPlayerProfile(nameOrUuid: string): Promise<PlayerProfil
 
   if (!rawPlayer) return null;
 
-  const hasMatches = (rawPlayer.wins || 0) + (rawPlayer.losses || 0) > 0 || (rawPlayer.kills || 0) > 0 || Object.keys(rawPlayer.kitElo || {}).length > 0;
-  const overallElo = hasMatches ? (rawPlayer.elo || 1000) : null;
+  const kitEloNormalized: Record<string, number> = {};
+  for (const [k, v] of Object.entries(rawPlayer.kitElo || {})) {
+    if (!k.toLowerCase().startsWith("custom")) {
+      kitEloNormalized[normalizeKit(k)] = v as number;
+    }
+  }
+  const playedKits = Object.keys(kitEloNormalized);
+  const isRanked = playedKits.length > 0;
+  let overallElo: number | null = null;
+  if (isRanked) {
+    const sum = playedKits.reduce((acc, k) => acc + kitEloNormalized[k], 0);
+    overallElo = Math.round(sum / playedKits.length);
+  }
   const kills = rawPlayer.kills || 0;
   const deaths = rawPlayer.deaths || 0;
   const wins = rawPlayer.wins || 0;
@@ -310,10 +326,6 @@ export async function getPlayerProfile(nameOrUuid: string): Promise<PlayerProfil
   const totalMatches = wins + losses;
   const winRate = totalMatches > 0 ? parseFloat(((wins / totalMatches) * 100).toFixed(1)) : 0.0;
 
-  const kitEloNormalized: Record<string, number> = {};
-  for (const [k, v] of Object.entries(rawPlayer.kitElo || {})) {
-    kitEloNormalized[normalizeKit(k)] = v as number;
-  }
   const kitWinsMap: Record<string, number> = rawPlayer.kitWins || {};
 
   const pts: Record<string, number | null> = { overall: overallElo };
@@ -337,8 +349,8 @@ export async function getPlayerProfile(nameOrUuid: string): Promise<PlayerProfil
     uuid: rawPlayer.uuid,
     name: rawPlayer.name,
     elo: overallElo,
-    tier: hasMatches ? getRankTier(overallElo) : 'Unranked',
-    isRanked: hasMatches,
+    tier: isRanked ? getRankTier(overallElo) : 'Unranked',
+    isRanked,
     pts,
     wins,
     losses,
