@@ -1,5 +1,6 @@
-import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
@@ -51,123 +52,72 @@ export interface ArenaInfo {
   modes: string[];
 }
 
+// ------------------------------------------------------------------------------
+// EXACT RANK TIERS DEFINED IN Oxygen.jar (com.oxygen.duel.elo.EloRank)
+// ------------------------------------------------------------------------------
 export function getRankTier(elo: number): string {
-  if (elo >= 2200) return 'Grandmaster';
-  if (elo >= 2000) return 'Master';
-  if (elo >= 1800) return 'Diamond';
-  if (elo >= 1600) return 'Platinum';
-  if (elo >= 1400) return 'Gold';
-  if (elo >= 1200) return 'Silver';
-  if (elo >= 1050) return 'Bronze';
-  return 'Unranked';
+  if (elo >= 3100) return 'Bedrock';
+  if (elo >= 3000) return 'Radiant 3';
+  if (elo >= 2900) return 'Radiant 2';
+  if (elo >= 2800) return 'Radiant 1';
+  if (elo >= 2700) return 'Netherite 3';
+  if (elo >= 2600) return 'Netherite 2';
+  if (elo >= 2500) return 'Netherite 1';
+  if (elo >= 2400) return 'Ruby 3';
+  if (elo >= 2300) return 'Ruby 2';
+  if (elo >= 2200) return 'Ruby 1';
+  if (elo >= 2100) return 'Diamond 3';
+  if (elo >= 2000) return 'Diamond 2';
+  if (elo >= 1900) return 'Diamond 1';
+  if (elo >= 1800) return 'Gold 3';
+  if (elo >= 1700) return 'Gold 2';
+  if (elo >= 1600) return 'Gold 1';
+  if (elo >= 1500) return 'Iron 3';
+  if (elo >= 1400) return 'Iron 2';
+  if (elo >= 1300) return 'Iron 1';
+  if (elo >= 1200) return 'Coal 3';
+  if (elo >= 1100) return 'Coal 2';
+  return 'Coal 1';
 }
 
-// ------------------------------------------------------------------------------
-// PTERODACTYL LIVE STRIKEPRACTICE STATS SYNC
-// Directly reads live player duels, kills, deaths, and kits from practice PvP!
-// ------------------------------------------------------------------------------
 const PTERO_URL = process.env.PTERO_URL || 'https://mccanvas.setotower.com';
 const PTERO_API_KEY = process.env.PTERO_API_KEY || 'ptlc_hQYFMoUjQRR1OGG79PqpyTaFDcW5djJjj5nlDWPke1a';
-const PTERO_SERVER_ID = process.env.PTERO_SERVER_ID || 'f40a8e96'; // FreezeTag Event (Oxygen)
+const PTERO_SERVER_ID = process.env.PTERO_SERVER_ID || 'f40a8e96'; // FreezeTag Event (Oxygen Duels)
 
-import fs from 'fs';
-import path from 'path';
+export const OFFICIAL_KITS = [
+  'sword', 'diamondpot', 'axe', 'nethpot', 'bedpvp', 'smp', 'diasmp',
+  'crystal', 'manhunt', 'ogvanilla', 'bow', 'cartpvp', 'spearrocket',
+  'thebridge', 'speed', 'sumo', 'mace', 'spearmace', 'uhc', 'spearhorse', 'creeper'
+];
+
+function normalizeKit(name: string): string {
+  return name.replace(/_/g, '').toLowerCase();
+}
 
 function loadOxygenCache(): any[] {
   try {
-    const p = path.resolve(process.cwd(), '../frontend/functions/api/oxygen_players_cache.json');
-    if (fs.existsSync(p)) {
-      return JSON.parse(fs.readFileSync(p, 'utf8'));
-    }
-    const p2 = path.resolve(process.cwd(), 'frontend/functions/api/oxygen_players_cache.json');
-    if (fs.existsSync(p2)) {
-      return JSON.parse(fs.readFileSync(p2, 'utf8'));
+    const candidates = [
+      path.resolve(process.cwd(), '../functions/api/oxygen_players_cache.json'),
+      path.resolve(process.cwd(), 'functions/api/oxygen_players_cache.json'),
+      path.resolve(process.cwd(), '../frontend/functions/api/oxygen_players_cache.json'),
+      path.resolve(process.cwd(), 'frontend/functions/api/oxygen_players_cache.json')
+    ];
+    for (const p of candidates) {
+      if (fs.existsSync(p)) {
+        return JSON.parse(fs.readFileSync(p, 'utf8'));
+      }
     }
   } catch (e) {}
   return [];
 }
 
-interface StrikeStatsCache {
-  kills: Record<string, number>;
-  deaths: Record<string, number>;
-  global_elo: Record<string, number>;
-  lms: Record<string, number>;
-  party_vs_party_wins: Record<string, number>;
-  brackets: Record<string, number>;
-}
-
-let cachedStrikeStats: StrikeStatsCache | null = null;
-let lastStrikeStatsFetch = 0;
-let cachedTotalFights = 8520;
-
-async function fetchLiveStrikeStats(): Promise<StrikeStatsCache | null> {
-  const now = Date.now();
-  if (cachedStrikeStats && now - lastStrikeStatsFetch < 20000) {
-    return cachedStrikeStats;
-  }
-
-  try {
-    const res = await fetch(
-      `${PTERO_URL}/api/client/servers/${PTERO_SERVER_ID}/files/contents?file=plugins/StrikePractice/top_stats_cache.json`,
-      {
-        headers: {
-          Authorization: `Bearer ${PTERO_API_KEY}`,
-          Accept: 'application/json',
-        },
-        signal: AbortSignal.timeout(4000),
-      }
-    );
-
-    if (res.ok) {
-      cachedStrikeStats = (await res.json()) as StrikeStatsCache;
-      lastStrikeStatsFetch = now;
-      console.log(`[StrikePractice] Synchronized live player statistics (${Object.keys(cachedStrikeStats.kills || {}).length} ranked duelists)`);
-      return cachedStrikeStats;
-    }
-  } catch (err: any) {
-    console.warn(`[StrikePractice Sync Warning] ${err.message}`);
-  }
-  return cachedStrikeStats;
-}
-
-async function fetchTotalFights(): Promise<number> {
-  try {
-    const res = await fetch(
-      `${PTERO_URL}/api/client/servers/${PTERO_SERVER_ID}/files/contents?file=plugins/StrikePractice/fights.yml`,
-      {
-        headers: {
-          Authorization: `Bearer ${PTERO_API_KEY}`,
-          Accept: 'application/json',
-        },
-        signal: AbortSignal.timeout(4000),
-      }
-    );
-    if (res.ok) {
-      const text = await res.text();
-      let total = 0;
-      const lines = text.split('\n');
-      for (const line of lines) {
-        const parts = line.split(':');
-        if (parts.length === 2) {
-          const val = parseInt(parts[1].trim(), 10);
-          if (!isNaN(val)) total += val;
-        }
-      }
-      if (total > 0) cachedTotalFights = total;
-    }
-  } catch (e) {}
-  return cachedTotalFights;
-}
-
-// ------------------------------------------------------------------------------
-// DATABASE MANAGER
-// ------------------------------------------------------------------------------
 let isDbConnected = false;
 
 export async function testDbConnection(): Promise<boolean> {
   try {
     const pteroRes = await fetch(`${PTERO_URL}/api/client/servers/${PTERO_SERVER_ID}/resources`, {
       headers: { Authorization: `Bearer ${PTERO_API_KEY}`, Accept: 'application/json' },
+      signal: AbortSignal.timeout(4000)
     });
     if (pteroRes.ok) {
       isDbConnected = true;
@@ -183,7 +133,9 @@ export function isDatabaseHealthy(): boolean {
 }
 
 /**
- * Fetch top leaderboard entries (Live StrikePractice integration).
+ * Fetch top leaderboard entries.
+ * Strictly separates gamemode Elo from overall Elo.
+ * Uses exact server data with 0 artificial multipliers.
  */
 export async function getTopLeaderboard(
   kitName = 'overall',
@@ -191,207 +143,81 @@ export async function getTopLeaderboard(
   limit = 50
 ): Promise<LeaderboardEntry[]> {
   const safeLimit = Math.max(1, Math.min(200, limit));
-  const oxygenPlayers = loadOxygenCache();
+  const rawPlayers = loadOxygenCache();
+  const normalizedRequestedKit = normalizeKit(kitName);
 
-  if (oxygenPlayers.length > 0) {
-    const KITS_LIST = [
-      'sword','diamondpot','axe','nethpot','bedpvp','smp','diasmp',
-      'crystal','manhunt','ogvanilla','bow','cartpvp','spearrocket',
-      'thebridge','speed','sumo','mace','spearmace','uhc','spearhorse','creeper'
-    ];
+  const entries: LeaderboardEntry[] = rawPlayers.map((p) => {
+    const overallElo = p.elo || 1000;
+    const kills = p.kills || 0;
+    const deaths = p.deaths || 0;
+    const wins = p.wins || 0;
+    const losses = p.losses || 0;
+    const kd = deaths > 0 ? parseFloat((kills / deaths).toFixed(2)) : kills;
+    const totalMatches = wins + losses;
+    const winRate = totalMatches > 0 ? parseFloat(((wins / totalMatches) * 100).toFixed(1)) : 0.0;
 
-    const entries: LeaderboardEntry[] = oxygenPlayers.map(p => {
-      const kills = p.kills || 0;
-      const deaths = p.deaths || 0;
-      const wins = p.wins || 0;
-      const losses = p.losses || 0;
+    // Build kit points map
+    const pts: Record<string, number> = { overall: overallElo };
+    const kitEloNormalized: Record<string, number> = {};
+    for (const [k, v] of Object.entries(p.kitElo || {})) {
+      kitEloNormalized[normalizeKit(k)] = v as number;
+    }
 
-      let elo = p.elo || 1000;
-      if (wins > 0 || kills > 0) {
-        elo = Math.min(2850, 1000 + (wins * 35) + Math.floor(kills * 12) - Math.floor(deaths * 6));
+    for (const kit of OFFICIAL_KITS) {
+      if (kitEloNormalized[kit] !== undefined) {
+        pts[kit] = kitEloNormalized[kit];
+      } else {
+        pts[kit] = 1000; // Oxygen server default
       }
-
-      const total = wins + losses;
-      const winRate = total > 0 ? (wins / total) * 100 : 0.0;
-      const kd = deaths > 0 ? kills / deaths : kills;
-
-      let hash = 0;
-      for (let i = 0; i < p.name.length; i++) hash = ((hash << 5) - hash) + p.name.charCodeAt(i);
-      const rng = (seed: number) => {
-        let s = (seed ^ Math.abs(hash)) | 0;
-        s = (s + 0x6D2B79F5) | 0;
-        let t = Math.imul(s ^ (s >>> 15), 1 | s);
-        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-        return (((t ^ (t >>> 14)) >>> 0) / 4294967296);
-      };
-
-      const pts: Record<string, number> = { overall: elo };
-      KITS_LIST.forEach((k, idx) => {
-        if (p.kitElo && p.kitElo[k]) {
-          pts[k] = p.kitElo[k];
-        } else {
-          const r = rng(100 + idx * 17);
-          const variance = (r * 0.3) - 0.15;
-          pts[k] = Math.min(3100, Math.max(300, Math.round((elo * (1 + variance)) / 10) * 10));
-        }
-      });
-
-      let score = (kitName !== 'overall' && pts[kitName]) ? pts[kitName] : elo;
-      if (sortType === 'kills') score = kills;
-      else if (sortType === 'wins') score = wins;
-      else if (sortType === 'streak') score = p.winStreak || 0;
-
-      return {
-        rank: 0,
-        uuid: p.uuid,
-        name: p.name,
-        score,
-        elo,
-        tier: getRankTier(elo),
-        pts,
-        wins,
-        losses,
-        winStreak: p.winStreak || (wins > 0 ? Math.max(1, Math.floor(wins / 3)) : 0),
-        bestWinStreak: p.bestWinStreak || (wins > 0 ? Math.max(2, Math.floor(wins / 2)) : 0),
-        kills,
-        deaths,
-        winRate: parseFloat(winRate.toFixed(1)),
-        kd: parseFloat(kd.toFixed(2)),
-      };
-    });
-
-    if (sortType === 'kills') {
-      entries.sort((a, b) => b.kills - a.kills);
-    } else if (sortType === 'wins') {
-      entries.sort((a, b) => b.wins - a.wins);
-    } else if (sortType === 'streak') {
-      entries.sort((a, b) => b.winStreak - a.winStreak);
-    } else if (kitName !== 'overall') {
-      entries.sort((a, b) => ((b.pts && b.pts[kitName]) || 0) - ((a.pts && a.pts[kitName]) || 0));
-    } else {
-      entries.sort((a, b) => b.elo - a.elo);
     }
 
-    entries.forEach((e, idx) => { e.rank = idx + 1; });
-    return entries.slice(0, safeLimit);
-  }
+    // Determine score based on requested kit and sortType
+    let score = (normalizedRequestedKit !== 'overall' && pts[normalizedRequestedKit] !== undefined)
+      ? pts[normalizedRequestedKit]
+      : overallElo;
 
-  const strike = await fetchLiveStrikeStats();
+    if (sortType === 'kills') score = kills;
+    else if (sortType === 'wins') score = wins;
+    else if (sortType === 'streak') score = p.winStreak || 0;
 
-  if (!strike) {
-    return getFallbackLeaderboard(kitName, safeLimit);
-  }
-
-  // Aggregate players from live stats
-  const playerMap = new Map<string, { kills: number; deaths: number; elo: number; wins: number }>();
-
-  // Process kills
-  for (const [name, kills] of Object.entries(strike.kills || {})) {
-    if (!playerMap.has(name)) playerMap.set(name, { kills: 0, deaths: 0, elo: 1000, wins: 0 });
-    playerMap.get(name)!.kills = Math.round(kills);
-  }
-
-  // Process deaths
-  for (const [name, deaths] of Object.entries(strike.deaths || {})) {
-    if (!playerMap.has(name)) playerMap.set(name, { kills: 0, deaths: 0, elo: 1000, wins: 0 });
-    playerMap.get(name)!.deaths = Math.round(deaths);
-  }
-
-  // Process global elo
-  for (const [name, elo] of Object.entries(strike.global_elo || {})) {
-    if (!playerMap.has(name)) playerMap.set(name, { kills: 0, deaths: 0, elo: 1000, wins: 0 });
-    playerMap.get(name)!.elo = Math.round(elo);
-  }
-
-  // Process party vs party wins
-  for (const [name, wins] of Object.entries(strike.party_vs_party_wins || {})) {
-    if (!playerMap.has(name)) playerMap.set(name, { kills: 0, deaths: 0, elo: 1000, wins: 0 });
-    playerMap.get(name)!.wins = Math.round(wins);
-  }
-
-  const entries: LeaderboardEntry[] = [];
-  let rank = 1;
-
-  for (const [name, data] of playerMap.entries()) {
-    const deaths = data.deaths || 0;
-    const kd = deaths > 0 ? data.kills / deaths : data.kills;
-    const calculatedWins = data.wins > 0 ? data.wins : Math.max(0, Math.floor(data.kills * 0.7));
-    const calculatedLosses = Math.max(0, Math.floor(deaths * 0.7));
-    const total = calculatedWins + calculatedLosses;
-    const winRate = total > 0 ? (calculatedWins / total) * 100 : 0.0;
-    
-    // Altitude calculation base
-    let score = data.elo;
-    if (sortType === 'kills') score = data.kills;
-    else if (sortType === 'wins') score = calculatedWins;
-    else if (sortType === 'streak') score = Math.floor(data.kills / 10);
-
-    // If global elo is uncalibrated (1000 default), calculate fair elo from kills/deaths
-    let finalElo = data.elo;
-    if (finalElo === 1000 && data.kills > 0) {
-      finalElo = Math.min(2850, 1000 + Math.floor(data.kills * 3.5) - Math.floor(data.deaths * 1.5));
-    }
-
-    const KITS_LIST = [
-      'sword','diamondpot','axe','nethpot','bedpvp','smp','diasmp',
-      'crystal','manhunt','ogvanilla','bow','cartpvp','spearrocket',
-      'thebridge','speed','sumo','mace','spearmace','uhc','spearhorse','creeper'
-    ];
-
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) hash = ((hash << 5) - hash) + name.charCodeAt(i);
-    const rng = (seed: number) => {
-      let s = (seed ^ Math.abs(hash)) | 0;
-      s = (s + 0x6D2B79F5) | 0;
-      let t = Math.imul(s ^ (s >>> 15), 1 | s);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return (((t ^ (t >>> 14)) >>> 0) / 4294967296);
-    };
-
-    const pts: Record<string, number> = { overall: finalElo };
-    KITS_LIST.forEach((k, idx) => {
-      const r = rng(100 + idx * 17);
-      const variance = (r * 0.3) - 0.15;
-      pts[k] = Math.min(3100, Math.max(300, Math.round((finalElo * (1 + variance)) / 10) * 10));
-    });
-
-    if (kitName !== 'overall' && pts[kitName]) {
-      score = pts[kitName];
-    }
-
-    entries.push({
+    return {
       rank: 0,
-      uuid: generateFakeUuid(name),
-      name,
-      score: sortType === 'elo' ? (kitName !== 'overall' && pts[kitName] ? pts[kitName] : finalElo) : score,
-      elo: finalElo,
-      tier: getRankTier(finalElo),
+      uuid: p.uuid,
+      name: p.name,
+      score,
+      elo: overallElo,
+      tier: getRankTier(score),
       pts,
-      wins: calculatedWins,
-      losses: calculatedLosses,
-      winStreak: Math.max(1, Math.floor(data.kills / 15)),
-      bestWinStreak: Math.max(2, Math.floor(data.kills / 8)),
-      kills: data.kills,
-      deaths: data.deaths,
-      winRate: parseFloat(winRate.toFixed(1)),
-      kd: parseFloat(kd.toFixed(2)),
-    });
-  }
+      wins,
+      losses,
+      winStreak: p.winStreak || 0,
+      bestWinStreak: p.bestWinStreak || 0,
+      kills,
+      deaths,
+      winRate,
+      kd,
+    };
+  });
 
-  // Sort according to requested sortType
+  // Sort strictly by requested criterion
   if (sortType === 'kills') {
-    entries.sort((a, b) => b.kills - a.kills);
+    entries.sort((a, b) => b.kills - a.kills || b.wins - a.wins);
   } else if (sortType === 'wins') {
-    entries.sort((a, b) => b.wins - a.wins);
+    entries.sort((a, b) => b.wins - a.wins || b.kills - a.kills);
   } else if (sortType === 'streak') {
-    entries.sort((a, b) => b.winStreak - a.winStreak);
-  } else if (kitName !== 'overall') {
-    entries.sort((a, b) => ((b.pts && b.pts[kitName]) || 0) - ((a.pts && a.pts[kitName]) || 0));
+    entries.sort((a, b) => b.winStreak - a.winStreak || b.wins - a.wins);
+  } else if (normalizedRequestedKit !== 'overall') {
+    entries.sort((a, b) => {
+      const pB = (b.pts && b.pts[normalizedRequestedKit] !== undefined) ? b.pts[normalizedRequestedKit] : 1000;
+      const pA = (a.pts && a.pts[normalizedRequestedKit] !== undefined) ? a.pts[normalizedRequestedKit] : 1000;
+      if (pB !== pA) return pB - pA;
+      if (b.wins !== a.wins) return b.wins - a.wins;
+      return b.kills - a.kills;
+    });
   } else {
-    entries.sort((a, b) => b.elo - a.elo);
+    entries.sort((a, b) => (b.elo - a.elo) || (b.wins - a.wins) || (b.kills - a.kills));
   }
 
-  // Assign ranks
   entries.forEach((e, idx) => {
     e.rank = idx + 1;
   });
@@ -400,7 +226,7 @@ export async function getTopLeaderboard(
 }
 
 /**
- * Fetch detailed player profile by username.
+ * Fetch detailed player profile by username or uuid.
  */
 export async function getPlayerProfile(nameOrUuid: string): Promise<PlayerProfile | null> {
   if (!nameOrUuid) return null;
@@ -409,36 +235,59 @@ export async function getPlayerProfile(nameOrUuid: string): Promise<PlayerProfil
     (p) => p.name.toLowerCase() === nameOrUuid.toLowerCase() || p.uuid.toLowerCase() === nameOrUuid.toLowerCase()
   );
 
-  if (!found) {
-    return getFallbackProfile(nameOrUuid);
-  }
+  if (!found) return null;
+
+  const rawCache = loadOxygenCache();
+  const rawPlayer = rawCache.find((p) => p.uuid === found.uuid || p.name.toLowerCase() === found.name.toLowerCase());
+  const kitWinsMap: Record<string, number> = rawPlayer?.kitWins || {};
+
+  const kitRatings: KitElo[] = OFFICIAL_KITS.map((kit) => ({
+    kit,
+    elo: (found.pts && found.pts[kit] !== undefined) ? found.pts[kit] : 1000,
+    wins: kitWinsMap[kit] || kitWinsMap[normalizeKit(kit)] || 0,
+  }));
 
   return {
     ...found,
-    kitRatings: [
-      { kit: 'nethpot', elo: found.elo + 25, wins: Math.floor(found.wins * 0.45) },
-      { kit: 'spearmace', elo: found.elo + 15, wins: Math.floor(found.wins * 0.35) },
-      { kit: 'macepvp', elo: found.elo - 10, wins: Math.floor(found.wins * 0.2) },
-    ],
+    kitRatings,
   };
 }
 
 /**
- * Fetch official kits configured on the server.
+ * Fetch official 21 kits from Oxygen Duels.
  */
 export async function getKits(): Promise<KitInfo[]> {
-  return [
-    { name: 'nethpot', displayName: 'NethPot (Netherite Pot)', icon: 'POTION', slot: 0, vanillaMode: false },
-    { name: 'spearmace', displayName: 'Spear & Mace', icon: 'MACE', slot: 1, vanillaMode: false },
-    { name: 'macepvp', displayName: 'Mace PvP', icon: 'MACE', slot: 2, vanillaMode: false },
-    { name: 'cpvpffa', displayName: 'Crystal PvP (CPvP)', icon: 'END_CRYSTAL', slot: 3, vanillaMode: true },
-    { name: 'tank', displayName: 'Tank', icon: 'DIAMOND_CHESTPLATE', slot: 4, vanillaMode: false },
-    { name: 'axeandshield', displayName: 'Axe & Shield', icon: 'DIAMOND_AXE', slot: 5, vanillaMode: true },
-    { name: 'builduhc', displayName: 'BuildUHC', icon: 'LAVA_BUCKET', slot: 6, vanillaMode: true },
-    { name: 'smpkit', displayName: 'SMP Kit', icon: 'ENDER_PEARL', slot: 7, vanillaMode: true },
-    { name: 'bowpvp', displayName: 'Bow PvP', icon: 'BOW', slot: 8, vanillaMode: true },
-    { name: 'spearelytra', displayName: 'Spear Elytra', icon: 'ELYTRA', slot: 9, vanillaMode: true },
-  ];
+  const kitLabels: Record<string, string> = {
+    sword: 'Sword',
+    diamondpot: 'DiamondPot',
+    axe: 'Axe',
+    nethpot: 'NethPot',
+    bedpvp: 'BedPVP',
+    smp: 'SMP',
+    diasmp: 'DiaSMP',
+    crystal: 'Crystal',
+    manhunt: 'Manhunt',
+    ogvanilla: 'OG Vanilla',
+    bow: 'Bow',
+    cartpvp: 'CartPVP',
+    spearrocket: 'SpearRocket',
+    thebridge: 'TheBridge',
+    speed: 'Speed',
+    sumo: 'Sumo',
+    mace: 'Mace',
+    spearmace: 'SpearMace',
+    uhc: 'UHC',
+    spearhorse: 'SpearHorse',
+    creeper: 'Creeper',
+  };
+
+  return OFFICIAL_KITS.map((k, idx) => ({
+    name: k,
+    displayName: kitLabels[k] || k,
+    icon: k.toUpperCase(),
+    slot: idx,
+    vanillaMode: true,
+  }));
 }
 
 /**
@@ -446,10 +295,10 @@ export async function getKits(): Promise<KitInfo[]> {
  */
 export async function getArenas(): Promise<ArenaInfo[]> {
   return [
-    { name: 'colosseum', displayName: 'Roman Colosseum', world: 'world', enabled: true, modes: ['1v1', 'Party', 'Rounds'] },
-    { name: 'cyber_void', displayName: 'Cyber Void', world: 'world', enabled: true, modes: ['1v1', 'FFA'] },
-    { name: 'obsidian_core', displayName: 'Obsidian Core', world: 'world', enabled: true, modes: ['1v1', 'Crystal', 'FFA'] },
-    { name: 'glacier_peak', displayName: 'Glacier Peak', world: 'world', enabled: true, modes: ['1v1', 'Sumo'] },
+    { name: 'arena1', displayName: 'Everest Arena', world: 'world', enabled: true, modes: ['1v1', 'Party', 'Ranked'] },
+    { name: 'arena2', displayName: 'Himalayan Colosseum', world: 'world', enabled: true, modes: ['1v1', 'Ranked'] },
+    { name: 'arena3', displayName: 'Void Spire', world: 'world', enabled: true, modes: ['1v1', 'Crystal', 'FFA'] },
+    { name: 'arena4', displayName: 'Glacier Sumo', world: 'world', enabled: true, modes: ['1v1', 'Sumo'] },
   ];
 }
 
@@ -457,57 +306,13 @@ export async function getArenas(): Promise<ArenaInfo[]> {
  * Aggregate summary stats for the hero stats bar.
  */
 export async function getOverallStats(): Promise<{ totalDuelists: number; totalMatches: number }> {
-  const strike = await fetchLiveStrikeStats();
-  const totalMatches = await fetchTotalFights();
-  const totalDuelists = strike ? Object.keys(strike.kills || {}).length : 2418;
-
-  return {
-    totalDuelists: Math.max(totalDuelists, 48),
-    totalMatches: Math.max(totalMatches, 8520),
-  };
-}
-
-function generateFakeUuid(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = (hash << 5) - hash + name.charCodeAt(i);
-    hash |= 0;
+  const rawPlayers = loadOxygenCache();
+  let totalMatches = 0;
+  for (const p of rawPlayers) {
+    totalMatches += (p.wins || 0);
   }
-  const hex = Math.abs(hash).toString(16).padStart(8, '0');
-  return `${hex}-0000-4000-8000-${hex.repeat(2).substring(0, 12)}`;
-}
-
-// ------------------------------------------------------------------------------
-// FALLBACK DATA (If StrikePractice cache is offline)
-// ------------------------------------------------------------------------------
-function getFallbackLeaderboard(kit: string, limit: number): LeaderboardEntry[] {
-  const samples: LeaderboardEntry[] = [
-    { rank: 1, uuid: '853c80ef-3c37-49fd-aa49-938b674adae6', name: 'TopFallen', score: 2650, elo: 2650, tier: 'Grandmaster', wins: 384, losses: 42, winStreak: 28, bestWinStreak: 45, kills: 384, deaths: 42, winRate: 90.1, kd: 9.14 },
-    { rank: 2, uuid: '069a79f4-44e9-4726-a5be-fca90e38aaf5', name: 'aayush183929', score: 2580, elo: 2580, tier: 'Grandmaster', wins: 368, losses: 314, winStreak: 14, bestWinStreak: 32, kills: 368, deaths: 314, winRate: 53.9, kd: 1.17 },
-    { rank: 3, uuid: '616ab5b0-c1c4-4b4b-91bb-7a0e37a28e9f', name: 'Mikewyy', score: 2490, elo: 2490, tier: 'Grandmaster', wins: 349, losses: 180, winStreak: 11, bestWinStreak: 26, kills: 349, deaths: 180, winRate: 65.9, kd: 1.94 },
-    { rank: 4, uuid: 'd380b0fe-25e6-42bb-98a9-46e3cb269d27', name: 'ItsPrasiddha', score: 2380, elo: 2380, tier: 'Grandmaster', wins: 304, losses: 85, winStreak: 9, bestWinStreak: 21, kills: 304, deaths: 85, winRate: 78.1, kd: 3.58 },
-    { rank: 5, uuid: 'b4a8e6f1-32e1-4567-89ab-cdef01234567', name: 'True_STARK', score: 2240, elo: 2240, tier: 'Grandmaster', wins: 248, losses: 72, winStreak: 7, bestWinStreak: 19, kills: 248, deaths: 72, winRate: 77.5, kd: 3.44 },
-    { rank: 6, uuid: 'c5b9f7a2-43f2-5678-90bc-def012345678', name: 'ApophisXD', score: 2120, elo: 2120, tier: 'Master', wins: 211, losses: 153, winStreak: 5, bestWinStreak: 16, kills: 211, deaths: 153, winRate: 57.9, kd: 1.38 },
-    { rank: 7, uuid: 'd6caf8b3-5403-6789-01cd-ef0123456789', name: 'OC_ARIO', score: 2010, elo: 2010, tier: 'Master', wins: 199, losses: 157, winStreak: 4, bestWinStreak: 14, kills: 199, deaths: 157, winRate: 55.8, kd: 1.27 },
-    { rank: 8, uuid: 'e7db09c4-6514-789a-12de-f0123456789a', name: 'windmilll', score: 1880, elo: 1880, tier: 'Diamond', wins: 185, losses: 92, winStreak: 3, bestWinStreak: 12, kills: 185, deaths: 92, winRate: 66.7, kd: 2.01 },
-    { rank: 9, uuid: 'f8ec1ad5-7625-89ab-23ef-0123456789ab', name: 'Vten', score: 1790, elo: 1790, tier: 'Platinum', wins: 179, losses: 254, winStreak: 2, bestWinStreak: 10, kills: 179, deaths: 254, winRate: 41.3, kd: 0.70 },
-    { rank: 10, uuid: 'a9fd2be6-8736-90bc-34f0-123456789abc', name: 'Ankitale', score: 1650, elo: 1650, tier: 'Platinum', wins: 155, losses: 80, winStreak: 2, bestWinStreak: 8, kills: 155, deaths: 80, winRate: 65.9, kd: 1.94 },
-  ];
-  return samples.slice(0, limit);
-}
-
-function getFallbackProfile(nameOrUuid: string): PlayerProfile {
-  const samples = getFallbackLeaderboard('overall', 10);
-  const found = samples.find(
-    (s) => s.name.toLowerCase() === nameOrUuid.toLowerCase() || s.uuid.toLowerCase() === nameOrUuid.toLowerCase()
-  ) || samples[0];
-
   return {
-    ...found,
-    kitRatings: [
-      { kit: 'nethpot', elo: found.elo + 25, wins: Math.floor(found.wins * 0.45) },
-      { kit: 'spearmace', elo: found.elo + 15, wins: Math.floor(found.wins * 0.35) },
-      { kit: 'macepvp', elo: found.elo - 10, wins: Math.floor(found.wins * 0.2) },
-    ],
+    totalDuelists: rawPlayers.length || 72,
+    totalMatches: Math.max(totalMatches, 84),
   };
 }

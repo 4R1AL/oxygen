@@ -1,5 +1,4 @@
-// Cloudflare Pages Function: /api/player/:name
-// Server: FreezeTag Event (Oxygen Duels) - Exact server stats
+// Cloudflare Pages Function - Live Oxygen Duels Player Profile
 const exactPlayers = [
   {
     "n": "Ah_duo",
@@ -28,7 +27,7 @@ const exactPlayers = [
       "spearmace": 1000,
       "uhc": 1000,
       "spearhorse": 1000,
-      "creeper": 1000
+      "creeper": 1027
     },
     "kills": 24,
     "deaths": 30,
@@ -93,7 +92,7 @@ const exactPlayers = [
       "diasmp": 1000,
       "crystal": 1000,
       "manhunt": 1000,
-      "ogvanilla": 1000,
+      "ogvanilla": 1014,
       "bow": 1000,
       "cartpvp": 1000,
       "spearrocket": 1000,
@@ -160,7 +159,7 @@ const exactPlayers = [
     "elo": 1000,
     "pts": {
       "overall": 1000,
-      "sword": 1000,
+      "sword": 969,
       "diamondpot": 1000,
       "axe": 1000,
       "nethpot": 1000,
@@ -1613,7 +1612,7 @@ const exactPlayers = [
       "diasmp": 1000,
       "crystal": 1000,
       "manhunt": 1000,
-      "ogvanilla": 1000,
+      "ogvanilla": 986,
       "bow": 1000,
       "cartpvp": 1000,
       "spearrocket": 1000,
@@ -2745,16 +2744,30 @@ export async function onRequest(context) {
     return new Response(JSON.stringify({ error: "Missing player name" }), { status: 400 });
   }
 
+  // Exact rank tiers defined in Oxygen.jar (EloRank.java)
   function getRankTier(elo) {
-    if (elo >= 2400) return 'Radiant';
-    if (elo >= 2100) return 'Netherite';
-    if (elo >= 1800) return 'Ruby';
-    if (elo >= 1500) return 'Diamond';
-    if (elo >= 1200) return 'Emerald';
-    if (elo >= 900) return 'Gold';
-    if (elo >= 600) return 'Iron';
-    if (elo >= 300) return 'Copper';
-    return 'Coal';
+    if (elo >= 3100) return "Bedrock";
+    if (elo >= 3000) return "Radiant 3";
+    if (elo >= 2900) return "Radiant 2";
+    if (elo >= 2800) return "Radiant 1";
+    if (elo >= 2700) return "Netherite 3";
+    if (elo >= 2600) return "Netherite 2";
+    if (elo >= 2500) return "Netherite 1";
+    if (elo >= 2400) return "Ruby 3";
+    if (elo >= 2300) return "Ruby 2";
+    if (elo >= 2200) return "Ruby 1";
+    if (elo >= 2100) return "Diamond 3";
+    if (elo >= 2000) return "Diamond 2";
+    if (elo >= 1900) return "Diamond 1";
+    if (elo >= 1800) return "Gold 3";
+    if (elo >= 1700) return "Gold 2";
+    if (elo >= 1600) return "Gold 1";
+    if (elo >= 1500) return "Iron 3";
+    if (elo >= 1400) return "Iron 2";
+    if (elo >= 1300) return "Iron 1";
+    if (elo >= 1200) return "Coal 3";
+    if (elo >= 1100) return "Coal 2";
+    return "Coal 1";
   }
 
   const found = exactPlayers.find(p => p.name.toLowerCase() === nameParam);
@@ -2785,5 +2798,11 @@ export async function onRequest(context) {
     });
   }
 
-  return new Response(JSON.stringify({ error: "Player not found" }), { status: 404 });
+  return new Response(JSON.stringify({ error: "Player not found" }), {
+    status: 404,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    }
+  });
 }

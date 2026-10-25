@@ -130,7 +130,7 @@ footer{text-align:center;color:var(--muted);padding:20px 16px 28px;font-size:13p
 <header>
 <svg id="flags" viewBox="0 0 1200 70" aria-hidden="true"></svg>
 <div class="ttlrow"><svg class="nf" viewBox="0 0 84 132" role="img" aria-label="Flag of Nepal"><polygon points="3,3 80,66 40,66 80,129 3,129" fill="#dc143c" stroke="#1d4fb8" stroke-width="5" stroke-linejoin="round"/><path d="M32.7,49.2 A11.5,11.5 0 1 1 20.2,33.6 A10,10 0 0 0 32.7,49.2 Z" fill="#fff"/><polygon points="21.0,55.4 21.8,58.0 24.3,56.7 23.0,59.2 25.6,60.0 23.0,60.8 24.3,63.3 21.8,62.0 21.0,64.6 20.2,62.0 17.7,63.3 19.0,60.8 16.4,60.0 19.0,59.2 17.7,56.7 20.2,58.0" fill="#fff"/><polygon points="22.0,86.0 23.9,90.8 28.0,87.6 27.3,92.7 32.4,92.0 29.2,96.1 34.0,98.0 29.2,99.9 32.4,104.0 27.3,103.3 28.0,108.4 23.9,105.2 22.0,110.0 20.1,105.2 16.0,108.4 16.7,103.3 11.6,104.0 14.8,99.9 10.0,98.0 14.8,96.1 11.6,92.0 16.7,92.7 16.0,87.6 20.1,90.8" fill="#fff"/><circle cx="22" cy="98" r="4.2" fill="#dc143c"/></svg><h1>Minecraft Nepal Ranks</h1></div>
-<p class="sub">Climb from Coal to Bedrock · 21 trails · 26 ranks · 8,849 m summit</p>
+<p class="sub">Climb from Coal to Bedrock · 21 trails · 22 ranks · 8,849 m summit</p>
 <div class="server-bar">
   <button class="server-pill" onclick="copyServerIp()" title="Click to copy server IP">
     <span class="server-dot" id="serverDot"></span>
@@ -171,9 +171,14 @@ Radiant:['#fff7c2','#ffe27a','#ffb347','#ff6fc0','#ffffff'],
 Bedrock:['#a3a3a3','#6a6a6a','#3f3f3f','#222222','#ffffff']
 };
 const R=[
-['Coal',[0,100,200]],['Copper',[300,400,500]],['Iron',[600,700,800]],
-['Gold',[900,1000,1100]],['Emerald',[1200,1300,1400]],['Diamond',[1500,1600,1700]],
-['Ruby',[1800,1900,2000]],['Netherite',[2100,2200,2300]],['Radiant',[2400]],['Bedrock',[2900]]
+  ['Coal',[0,1100,1200]],
+  ['Iron',[1300,1400,1500]],
+  ['Gold',[1600,1700,1800]],
+  ['Diamond',[1900,2000,2100]],
+  ['Ruby',[2200,2300,2400]],
+  ['Netherite',[2500,2600,2700]],
+  ['Radiant',[2800,2900,3000]],
+  ['Bedrock',[3100]]
 ];
 const pg=(pts,f)=>`<polygon points="${pts}" fill="${f}"/>`;
 function bedrock(id){
@@ -196,7 +201,7 @@ function bedrock(id){
  s+=`<polygon points="100,16 102,22 108,24 102,26 100,32 98,26 92,24 98,22" fill="#fff"/><polygon points="18,100 19.5,104 24,105.5 19.5,107 18,111 16.5,107 12,105.5 16.5,104" fill="#fff"/>`;
  return `<svg viewBox="0 -2 120 142" role="img" aria-label="${id}">${s}</svg>`;
 }
-const GL={Gold:'#ffd34d',Emerald:'#5dffa0',Diamond:'#7ff0ff',Ruby:'#ff4d6a',Netherite:'#ff7a2e',Radiant:'#ff9be0'};
+const GL={Gold:'#ffd34d',Diamond:'#7ff0ff',Ruby:'#ff4d6a',Netherite:'#ff7a2e',Radiant:'#ff9be0'};
 function fancy(m,t,id){
  const [a,b,c,d,k]=P[m],G=GL[m],f=`f${m}${t}`;
  const mirror=x=>`<g transform="translate(120 0) scale(-1 1)">${x}</g>`;
@@ -383,7 +388,7 @@ let PL = [
       "spearmace": 1000,
       "uhc": 1000,
       "spearhorse": 1000,
-      "creeper": 1000
+      "creeper": 1027
     },
     "kills": 24,
     "deaths": 30,
@@ -448,7 +453,7 @@ let PL = [
       "diasmp": 1000,
       "crystal": 1000,
       "manhunt": 1000,
-      "ogvanilla": 1000,
+      "ogvanilla": 1014,
       "bow": 1000,
       "cartpvp": 1000,
       "spearrocket": 1000,
@@ -515,7 +520,7 @@ let PL = [
     "elo": 1000,
     "pts": {
       "overall": 1000,
-      "sword": 1000,
+      "sword": 969,
       "diamondpot": 1000,
       "axe": 1000,
       "nethpot": 1000,
@@ -1968,7 +1973,7 @@ let PL = [
       "diasmp": 1000,
       "crystal": 1000,
       "manhunt": 1000,
-      "ogvanilla": 1000,
+      "ogvanilla": 986,
       "bow": 1000,
       "cartpvp": 1000,
       "spearrocket": 1000,
@@ -3095,11 +3100,11 @@ let PL = [
 ];
 function mkHead(n){
   const clean = encodeURIComponent((n||'Steve').replace(/^\./, ''));
-  return `<img src="https://mc-heads.net/avatar/${clean}/64" alt="${n}" style="width:100%;height:100%;display:block;border-radius:inherit;image-rendering:pixelated;" loading="lazy" onerror="this.onerror=null;this.src='https://minotar.net/helm/${clean}/64';">`;
+  return `<img src="https://mc-heads.net/avatar/${clean}/64" alt="${n}" style="width:100%;height:100%;display:block;border-radius:inherit;image-rendering:pixelated;" loading="lazy" onerror="this.onerror=null;this.src='https://minotar.net/helm/${clean}/64.png';">`;
 }
 let cur='overall';
-const alt=p=>Math.round(p/2900*8849).toLocaleString('en-US');
-const MATC={Coal:'#6b7280',Copper:'#c8814f',Iron:'#aeb4c0',Gold:'#f1b82d',Emerald:'#2fbf71',Diamond:'#37c7e6',Ruby:'#e0314f',Netherite:'#8a6a82',Radiant:'#ff9be0',Bedrock:'#8d7bff'};
+const alt=p=>Math.min(8849,Math.round(p/3100*8849)).toLocaleString('en-US');
+const MATC={Coal:'#6b7280',Iron:'#aeb4c0',Gold:'#f1b82d',Diamond:'#37c7e6',Ruby:'#e0314f',Netherite:'#8a6a82',Radiant:'#ff9be0',Bedrock:'#8d7bff'};
 const EV='<svg viewBox="0 0 128 128"><polygon points="8,100 44,40 64,70 84,24 120,100" fill="#f5c542"/><polygon points="84,24 70,50 84,44 98,52" fill="#fff"/></svg>';
 const EM='<svg class="ms" viewBox="4 28 40 90" aria-hidden="true"><path d="M32.7,49.2 A11.5,11.5 0 1 1 20.2,33.6 A10,10 0 0 0 32.7,49.2 Z" fill="#fff"/><polygon points="21.0,55.4 21.8,58.0 24.3,56.7 23.0,59.2 25.6,60.0 23.0,60.8 24.3,63.3 21.8,62.0 21.0,64.6 20.2,62.0 17.7,63.3 19.0,60.8 16.4,60.0 19.0,59.2 17.7,56.7 20.2,58.0" fill="#fff"/><polygon points="22.0,86.0 23.9,90.8 28.0,87.6 27.3,92.7 32.4,92.0 29.2,96.1 34.0,98.0 29.2,99.9 32.4,104.0 27.3,103.3 28.0,108.4 23.9,105.2 22.0,110.0 20.1,105.2 16.0,108.4 16.7,103.3 11.6,104.0 14.8,99.9 10.0,98.0 14.8,96.1 11.6,92.0 16.7,92.7 16.0,87.6 20.1,90.8" fill="#fff"/><circle cx="22" cy="98" r="4.2" fill="#7a0f24"/></svg>';
 const HM='<svg class="hm" viewBox="0 0 400 120" preserveAspectRatio="none" aria-hidden="true"><polygon points="0,120 0,80 60,40 100,70 170,10 230,64 290,30 340,70 400,50 400,120" fill="#fff"/></svg>';
@@ -3113,12 +3118,34 @@ function draw(){
  const q=document.getElementById('q').value.trim().toLowerCase();
  fl.querySelectorAll('.fw').forEach(w=>{const on=w.dataset.id===cur;w.classList.toggle('on',on);w.querySelector('.fg').setAttribute('aria-selected',on)});{const s=fl.querySelector('.fw.on');if(s&&fl.scrollTo)fl.scrollTo({left:s.offsetLeft-fl.clientWidth/2+s.offsetWidth/2,behavior:'smooth'})}
  const m=MODES.find(x=>x[0]===cur);document.getElementById('ttl').textContent=(cur==='overall'?'Overall':m[1])+' trail';
- const all=PL.slice().sort((a,b)=>b.pts[cur]-a.pts[cur]);
+ const all=PL.slice().sort((a,b)=>{
+   const pB = (b.pts && b.pts[cur] !== undefined) ? b.pts[cur] : (cur === 'overall' ? b.elo : 1000);
+   const pA = (a.pts && a.pts[cur] !== undefined) ? a.pts[cur] : (cur === 'overall' ? a.elo : 1000);
+   if (pB !== pA) return pB - pA;
+   if ((b.wins || 0) !== (a.wins || 0)) return (b.wins || 0) - (a.wins || 0);
+   return (b.kills || 0) - (a.kills || 0);
+ });
  const hero=document.getElementById('hero');
- if(!q&&cur==='overall'){const o=[1,0,2];hero.innerHTML='<div class="pod3">'+o.map(k=>{const p=all[k],pts=p.pts[cur],i=rankIdx(pts),c=TH[i];return `<div class="pp p${k+1}" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile"><span class="pos">#${k+1}</span>${k===0?'<span class="sm">SUMMIT</span>':''}<div class="hd">${mkHead(p.n)}</div><div class="bd">${bd(i)}</div><b>${p.n}</b><small>${c.name}</small><small>${alt(pts)} m · ${pts} pts</small></div>`}).join('')+'</div>'}else if(!q){const p=all[0],pts=p.pts[cur],i=rankIdx(pts);hero.innerHTML=`<div class="hero" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile">${HM}${EM}<div class="hl"><span class="sm">SUMMIT · #1</span><div class="hh"><span class="hf">${mkHead(p.n)}</span><div><b>${p.n}</b><small>${TH[i].name}</small></div></div><div class="alt"><strong>${alt(pts)}</strong> m<small>${pts} pts</small></div></div><div class="hb bd">${bd(i)}</div></div>`}else hero.innerHTML='';
+ if(!q&&cur==='overall'){
+   const o=[1,0,2];
+   hero.innerHTML='<div class="pod3">'+o.map(k=>{
+     const p=all[k];
+     if(!p) return '';
+     const pts=(p.pts&&p.pts[cur]!==undefined)?p.pts[cur]:p.elo,i=rankIdx(pts),c=TH[i];
+     return `<div class="pp p${k+1}" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile"><span class="pos">#${k+1}</span>${k===0?'<span class="sm">SUMMIT</span>':''}<div class="hd">${mkHead(p.n)}</div><div class="bd">${bd(i)}</div><b>${p.n}</b><small>${c.name}</small><small>${alt(pts)} m · ${pts} pts</small></div>`;
+   }).join('')+'</div>';
+ } else if(!q && all[0]){
+   const p=all[0],pts=(p.pts&&p.pts[cur]!==undefined)?p.pts[cur]:p.elo,i=rankIdx(pts);
+   hero.innerHTML=`<div class="hero" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile">${HM}${EM}<div class="hl"><span class="sm">SUMMIT · #1</span><div class="hh"><span class="hf">${mkHead(p.n)}</span><div><b>${p.n}</b><small>${TH[i].name}</small></div></div><div class="alt"><strong>${alt(pts)}</strong> m<small>${pts} pts</small></div></div><div class="hb bd">${bd(i)}</div></div>`;
+ } else hero.innerHTML='';
+
  document.getElementById('list').innerHTML=all.map((p,k)=>({p,k})).filter(x=>(q||x.k>=(cur==='overall'?3:1))&&x.p.n.toLowerCase().includes(q)).map(({p,k})=>{
-  const pts=p.pts[cur],i=rankIdx(pts),c=TH[i],nx=TH[i+1],f=nx?Math.round((pts-c.pts)/(nx.pts-c.pts)*100):100;
-  return `<div class="pcard" style="--acc:${k===1?'#c5cdd6':k===2?'#cd7f32':MATC[c.m]}" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile"><span class="pos${k===1?' s2':k===2?' s3':''}">#${k+1}</span><span class="pf">${mkHead(p.n)}</span><div class="pi"><b>${p.n}</b><small>${c.name}</small><div class="el" title="${nx?f+'% to '+nx.name:'Max rank'}"><i style="width:${f}%"></i></div><small>${alt(pts)} m · ${pts} pts</small></div><span class="pb bd">${bd(i)}</span></div>`}).join('')||'<p class="sub">No players found.</p>';
+  const pts=(p.pts&&p.pts[cur]!==undefined)?p.pts[cur]:p.elo,i=rankIdx(pts),c=TH[i],nx=TH[i+1];
+  const base = (c.pts === 0) ? 1000 : c.pts;
+  const target = nx ? nx.pts : 3100;
+  const f = nx ? Math.max(0, Math.min(100, Math.round((pts - base) / ((target - base) || 1) * 100))) : 100;
+  return `<div class="pcard" style="--acc:${k===1?'#c5cdd6':k===2?'#cd7f32':MATC[c.m]}" data-n="${p.n}" tabindex="0" role="button" aria-label="Open ${p.n} profile"><span class="pos${k===1?' s2':k===2?' s3':''}">#${k+1}</span><span class="pf">${mkHead(p.n)}</span><div class="pi"><b>${p.n}</b><small>${c.name}</small><div class="el" title="${nx?f+'% to '+nx.name:'Max rank'}"><i style="width:${f}%"></i></div><small>${alt(pts)} m · ${pts} pts</small></div><span class="pb bd">${bd(i)}</span></div>`;
+ }).join('')||'<p class="sub">No players found.</p>';
 }
 document.getElementById('q').addEventListener('input',draw);
 document.getElementById('lad').innerHTML=TH.map((r,i)=>`<div class="lc" data-r="${i}" tabindex="0" role="button" aria-label="Open ${r.name} details"><div class="bd">${bd(i)}</div><b>${r.name}</b><span>${r.pts}+ pts · ${alt(r.pts)} m</span></div>`).join('');
@@ -3126,17 +3153,31 @@ document.getElementById('lad').innerHTML=TH.map((r,i)=>`<div class="lc" data-r="
  for(let i=0;i<40;i++){const x=15+i*29.5,u=(x-600)/600,y=6+(1-u*u)*29;s+=`<rect class="fl" style="animation-delay:${(i%7)*.25}s" x="${x-8}" y="${y.toFixed(1)}" width="16" height="22" fill="${C[i%5]}" stroke="#0003"/>`}
  f.innerHTML=s})();
 let opener=null;const md=document.getElementById('md'),mb=document.getElementById('mb'),mx=document.getElementById('mx');
-function showP(n,el){const p=PL.find(x=>x.n===n);if(!p)return;opener=el;
- const pos=m=>PL.slice().sort((a,b)=>b.pts[m]-a.pts[m]).indexOf(p)+1;
- const oi=rankIdx(p.pts.overall),oc=TH[oi],on=TH[oi+1],of=on?Math.round((p.pts.overall-oc.pts)/(on.pts-oc.pts)*100):100;
- const gm=MODES.slice(1).map(m=>{const pt=p.pts[m[0]],i=rankIdx(pt);return `<div class="gm" data-r="${i}" tabindex="0" role="button" aria-label="Open ${TH[i].name} details"><span class="gi">${ICON[m[0]]}</span><div class="gt"><b>${m[1]}</b><small>#${pos(m[0])} · ${pt} pts</small><small class="rn">${TH[i].name}</small></div><span class="gb bd">${bd(i)}</span></div>`}).join('');
+function showP(n,el){
+ const p=PL.find(x=>x.n===n);if(!p)return;opener=el;
+ const pos=m=>PL.slice().sort((a,b)=>{
+   const pB = (b.pts && b.pts[m] !== undefined) ? b.pts[m] : 1000;
+   const pA = (a.pts && a.pts[m] !== undefined) ? a.pts[m] : 1000;
+   if (pB !== pA) return pB - pA;
+   if ((b.wins || 0) !== (a.wins || 0)) return (b.wins || 0) - (a.wins || 0);
+   return (b.kills || 0) - (a.kills || 0);
+ }).indexOf(p)+1;
+ const curOverall = (p.pts && p.pts.overall !== undefined) ? p.pts.overall : (p.elo || 1000);
+ const oi=rankIdx(curOverall),oc=TH[oi],on=TH[oi+1];
+ const obase = (oc.pts === 0) ? 1000 : oc.pts;
+ const otarget = on ? on.pts : 3100;
+ const of=on?Math.max(0, Math.min(100, Math.round((curOverall - obase)/((otarget - obase)||1)*100))):100;
+ const gm=MODES.slice(1).map(m=>{
+   const pt=(p.pts&&p.pts[m[0]]!==undefined)?p.pts[m[0]]:1000,i=rankIdx(pt);
+   return `<div class="gm" data-r="${i}" tabindex="0" role="button" aria-label="Open ${TH[i].name} details"><span class="gi">${ICON[m[0]]}</span><div class="gt"><b>${m[1]}</b><small>#${pos(m[0])} · ${pt} pts</small><small class="rn">${TH[i].name}</small></div><span class="gb bd">${bd(i)}</span></div>`;
+ }).join('');
  const statsCard = (p.kills !== undefined || p.wins !== undefined) ? `
   <div class="kvs" style="margin:14px 0;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
     <div class="kv"><span>Kills / Deaths</span><b>${p.kills || 0} / ${p.deaths || 0} (${p.kd || '0.00'})</b></div>
     <div class="kv"><span>Win Rate</span><b>${p.winRate || '0.0'}% (${p.wins || 0}W - ${p.losses || 0}L)</b></div>
-    <div class="kv"><span>Win Streak</span><b>${p.winStreak || 1} (Best: ${p.bestWinStreak || 2})</b></div>
+    <div class="kv"><span>Win Streak</span><b>${p.winStreak || 0} (Best: ${p.bestWinStreak || 0})</b></div>
   </div>` : '';
-  mb.innerHTML=`<div class="ph"><span class="hd2">${mkHead(p.n)}</span><div><h2 id="mn">${p.n}</h2><small>Minecraft profile</small></div></div><div class="ov"><span class="ob bd">${bd(oi)}</span><div style="flex:1;min-width:0"><small>Overall position</small><b>#${pos('overall')}</b><small>${oc.name} · ${p.pts.overall} pts · ${alt(p.pts.overall)} m</small><span class="pg"><i style="width:${of}%"></i></span><small>${on?of+'% to '+on.name:'Max rank'}</small></div></div>${statsCard}<h3 class="mh">All 21 gamemode rankings</h3><div class="gms">${gm}</div>`;
+ mb.innerHTML=`<div class="ph"><span class="hd2">${mkHead(p.n)}</span><div><h2 id="mn">${p.n}</h2><small>Minecraft profile</small></div></div><div class="ov"><span class="ob bd">${bd(oi)}</span><div style="flex:1;min-width:0"><small>Overall position</small><b>#${pos('overall')}</b><small>${oc.name} · ${curOverall} pts · ${alt(curOverall)} m</small><span class="pg"><i style="width:${of}%"></i></span><small>${on?of+'% to '+on.name:'Max rank'}</small></div></div>${statsCard}<h3 class="mh">All 21 gamemode rankings</h3><div class="gms">${gm}</div>`;
  md.hidden=false;document.body.style.overflow='hidden';mx.focus()}
 function showR(i,el){opener=el;const r=TH[i],nx=TH[i+1],pv=TH[i-1],tiers=R.find(x=>x[0]===r.m)[1].length;
  const row=(a,b)=>`<div class="kv"><span>${a}</span><b>${b}</b></div>`;
