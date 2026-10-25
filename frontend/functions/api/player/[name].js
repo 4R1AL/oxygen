@@ -1214,6 +1214,15 @@ export async function onRequest(context) {
   const found = exactPlayers.find(p => p.name.toLowerCase() === nameParam);
   if (found) {
     const elo = found.elo;
+    const rankedKits = Object.entries(found.pts || {})
+      .filter(([k]) => k !== "overall")
+      .map(([k, score]) => ({
+        kit: k,
+        elo: score,
+        tier: getRankTier(score)
+      }))
+      .sort((a, b) => b.elo - a.elo);
+
     const profile = {
       uuid: found.uuid,
       name: found.name,
@@ -1221,6 +1230,7 @@ export async function onRequest(context) {
       isRanked: found.isRanked,
       tier: found.isRanked ? getRankTier(elo) : "Unranked",
       pts: found.pts || {},
+      rankedKits,
       wins: found.wins || 0,
       losses: found.losses || 0,
       winStreak: found.winStreak || 0,

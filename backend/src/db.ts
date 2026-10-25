@@ -335,15 +335,18 @@ export async function getPlayerProfile(nameOrUuid: string): Promise<PlayerProfil
     }
   }
 
-  const kitRatings: KitElo[] = OFFICIAL_KITS.map((kit) => {
-    const elo = kitEloNormalized[kit] !== undefined ? kitEloNormalized[kit] : null;
-    return {
-      kit,
-      elo,
-      wins: kitWinsMap[kit] || kitWinsMap[normalizeKit(kit)] || 0,
-      tier: getRankTier(elo),
-    };
-  });
+  const kitRatings: KitElo[] = OFFICIAL_KITS
+    .filter((kit) => kitEloNormalized[kit] !== undefined && kitEloNormalized[kit] !== null)
+    .map((kit) => {
+      const elo = kitEloNormalized[kit];
+      return {
+        kit,
+        elo,
+        wins: kitWinsMap[kit] || kitWinsMap[normalizeKit(kit)] || 0,
+        tier: getRankTier(elo),
+      };
+    })
+    .sort((a, b) => (b.elo || 0) - (a.elo || 0));
 
   return {
     uuid: rawPlayer.uuid,
