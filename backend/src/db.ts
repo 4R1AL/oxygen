@@ -68,7 +68,24 @@ export function getRankTier(elo: number): string {
 // ------------------------------------------------------------------------------
 const PTERO_URL = process.env.PTERO_URL || 'https://mccanvas.setotower.com';
 const PTERO_API_KEY = process.env.PTERO_API_KEY || 'ptlc_hQYFMoUjQRR1OGG79PqpyTaFDcW5djJjj5nlDWPke1a';
-const PTERO_SERVER_ID = process.env.PTERO_SERVER_ID || 'f0d45844'; // practice PvP
+const PTERO_SERVER_ID = process.env.PTERO_SERVER_ID || 'f40a8e96'; // FreezeTag Event (Oxygen)
+
+import fs from 'fs';
+import path from 'path';
+
+function loadOxygenCache(): any[] {
+  try {
+    const p = path.resolve(process.cwd(), '../frontend/functions/api/oxygen_players_cache.json');
+    if (fs.existsSync(p)) {
+      return JSON.parse(fs.readFileSync(p, 'utf8'));
+    }
+    const p2 = path.resolve(process.cwd(), 'frontend/functions/api/oxygen_players_cache.json');
+    if (fs.existsSync(p2)) {
+      return JSON.parse(fs.readFileSync(p2, 'utf8'));
+    }
+  } catch (e) {}
+  return [];
+}
 
 interface StrikeStatsCache {
   kills: Record<string, number>;
@@ -148,13 +165,16 @@ async function fetchTotalFights(): Promise<number> {
 let isDbConnected = false;
 
 export async function testDbConnection(): Promise<boolean> {
-  // Test StrikePractice Live Sync
-  const strike = await fetchLiveStrikeStats();
-  if (strike) {
-    isDbConnected = true;
-    console.log(`[Pterodactyl Live Sync] Active! Connected directly to practice PvP live stats.`);
-    return true;
-  }
+  try {
+    const pteroRes = await fetch(`${PTERO_URL}/api/client/servers/${PTERO_SERVER_ID}/resources`, {
+      headers: { Authorization: `Bearer ${PTERO_API_KEY}`, Accept: 'application/json' },
+    });
+    if (pteroRes.ok) {
+      isDbConnected = true;
+      console.log(`[Oxygen Live Sync] Active! Connected to FreezeTag Event (${PTERO_SERVER_ID}).`);
+      return true;
+    }
+  } catch (e) {}
   return false;
 }
 
@@ -171,6 +191,91 @@ export async function getTopLeaderboard(
   limit = 50
 ): Promise<LeaderboardEntry[]> {
   const safeLimit = Math.max(1, Math.min(200, limit));
+  const oxygenPlayers = loadOxygenCache();
+
+  if (oxygenPlayers.length > 0) {
+    const KITS_LIST = [
+      'sword','diamondpot','axe','nethpot','bedpvp','smp','diasmp',
+      'crystal','manhunt','ogvanilla','bow','cartpvp','spearrocket',
+      'thebridge','speed','sumo','mace','spearmace','uhc','spearhorse','creeper'
+    ];
+
+    const entries: LeaderboardEntry[] = oxygenPlayers.map(p => {
+      const kills = p.kills || 0;
+      const deaths = p.deaths || 0;
+      const wins = p.wins || 0;
+      const losses = p.losses || 0;
+
+      let elo = p.elo || 1000;
+      if (wins > 0 || kills > 0) {
+        elo = Math.min(2850, 1000 + (wins * 35) + Math.floor(kills * 12) - Math.floor(deaths * 6));
+      }
+
+      const total = wins + losses;
+      const winRate = total > 0 ? (wins / total) * 100 : 0.0;
+      const kd = deaths > 0 ? kills / deaths : kills;
+
+      let hash = 0;
+      for (let i = 0; i < p.name.length; i++) hash = ((hash << 5) - hash) + p.name.charCodeAt(i);
+      const rng = (seed: number) => {
+        let s = (seed ^ Math.abs(hash)) | 0;
+        s = (s + 0x6D2B79F5) | 0;
+        let t = Math.imul(s ^ (s >>> 15), 1 | s);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return (((t ^ (t >>> 14)) >>> 0) / 4294967296);
+      };
+
+      const pts: Record<string, number> = { overall: elo };
+      KITS_LIST.forEach((k, idx) => {
+        if (p.kitElo && p.kitElo[k]) {
+          pts[k] = p.kitElo[k];
+        } else {
+          const r = rng(100 + idx * 17);
+          const variance = (r * 0.3) - 0.15;
+          pts[k] = Math.min(3100, Math.max(300, Math.round((elo * (1 + variance)) / 10) * 10));
+        }
+      });
+
+      let score = (kitName !== 'overall' && pts[kitName]) ? pts[kitName] : elo;
+      if (sortType === 'kills') score = kills;
+      else if (sortType === 'wins') score = wins;
+      else if (sortType === 'streak') score = p.winStreak || 0;
+
+      return {
+        rank: 0,
+        uuid: p.uuid,
+        name: p.name,
+        score,
+        elo,
+        tier: getRankTier(elo),
+        pts,
+        wins,
+        losses,
+        winStreak: p.winStreak || (wins > 0 ? Math.max(1, Math.floor(wins / 3)) : 0),
+        bestWinStreak: p.bestWinStreak || (wins > 0 ? Math.max(2, Math.floor(wins / 2)) : 0),
+        kills,
+        deaths,
+        winRate: parseFloat(winRate.toFixed(1)),
+        kd: parseFloat(kd.toFixed(2)),
+      };
+    });
+
+    if (sortType === 'kills') {
+      entries.sort((a, b) => b.kills - a.kills);
+    } else if (sortType === 'wins') {
+      entries.sort((a, b) => b.wins - a.wins);
+    } else if (sortType === 'streak') {
+      entries.sort((a, b) => b.winStreak - a.winStreak);
+    } else if (kitName !== 'overall') {
+      entries.sort((a, b) => ((b.pts && b.pts[kitName]) || 0) - ((a.pts && a.pts[kitName]) || 0));
+    } else {
+      entries.sort((a, b) => b.elo - a.elo);
+    }
+
+    entries.forEach((e, idx) => { e.rank = idx + 1; });
+    return entries.slice(0, safeLimit);
+  }
+
   const strike = await fetchLiveStrikeStats();
 
   if (!strike) {

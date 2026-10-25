@@ -1,46 +1,30 @@
 // Cloudflare Pages Function: /api/stats
+// Server: FreezeTag Event (Oxygen Duels) - Samrat's server
 export async function onRequest(context) {
   const pteroUrl = "https://mccanvas.setotower.com";
   const pteroKey = "ptlc_hQYFMoUjQRR1OGG79PqpyTaFDcW5djJjj5nlDWPke1a";
-  const pteroServerId = "f0d45844";
+  const pteroServerId = "f40a8e96";
 
-  let totalMatches = 8520;
-  let totalDuelists = 48;
+  let totalMatches = 1420;
+  let totalDuelists = 72;
   let onlinePlayers = 0;
 
-  // 1. Fetch live total fights
+  // 1. Fetch total duelists count from Oxygen playerdata directory
   try {
-    const res = await fetch(`${pteroUrl}/api/client/servers/${pteroServerId}/files/contents?file=plugins/StrikePractice/fights.yml`, {
-      headers: { "Authorization": `Bearer ${pteroKey}`, "Accept": "application/json" }
-    });
-    if (res.ok) {
-      const text = await res.text();
-      let sum = 0;
-      for (const line of text.split('\n')) {
-        const parts = line.split(':');
-        if (parts.length === 2) {
-          const val = parseInt(parts[1].trim(), 10);
-          if (!isNaN(val)) sum += val;
-        }
-      }
-      if (sum > 0) totalMatches = sum;
-    }
-  } catch (e) {}
-
-  // 2. Fetch total duelists count from top_stats_cache.json
-  try {
-    const res = await fetch(`${pteroUrl}/api/client/servers/${pteroServerId}/files/contents?file=plugins/StrikePractice/top_stats_cache.json`, {
+    const res = await fetch(`${pteroUrl}/api/client/servers/${pteroServerId}/files/list?directory=plugins/Oxygen/playerdata`, {
       headers: { "Authorization": `Bearer ${pteroKey}`, "Accept": "application/json" }
     });
     if (res.ok) {
       const data = await res.json();
-      if (data.kills) totalDuelists = Math.max(Object.keys(data.kills).length, 48);
+      if (data.data && Array.isArray(data.data)) {
+        totalDuelists = Math.max(data.data.length, 72);
+      }
     }
   } catch (e) {}
 
-  // 3. Ping for online count
+  // 2. Ping for online count
   try {
-    const pingRes = await fetch("https://api.mcstatus.io/v2/status/java/51.79.162.167:25590");
+    const pingRes = await fetch("https://api.mcstatus.io/v2/status/java/51.79.162.167:25594");
     if (pingRes.ok) {
       const d = await pingRes.json();
       onlinePlayers = d.players?.online || 0;
@@ -51,7 +35,7 @@ export async function onRequest(context) {
     onlinePlayers,
     totalDuelists,
     totalMatches,
-    serverName: "Oxygen PvP Nepal",
+    serverName: "Oxygen Duels Nepal",
     serverIp: "play.samratnagarkoti.com.np",
     version: "1.21.4"
   }), {

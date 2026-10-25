@@ -1,13 +1,12 @@
 // Cloudflare Pages Function: /api/player/:name
+// Server: FreezeTag Event (Oxygen Duels) - Samrat's server
+import cachedPlayers from '../oxygen_players_cache.json';
+
 export async function onRequest(context) {
-  const nameParam = decodeURIComponent(context.params.name || "").trim();
+  const nameParam = decodeURIComponent(context.params.name || "").trim().toLowerCase();
   if (!nameParam) {
     return new Response(JSON.stringify({ error: "Missing player name" }), { status: 400 });
   }
-
-  const pteroUrl = "https://mccanvas.setotower.com";
-  const pteroKey = "ptlc_hQYFMoUjQRR1OGG79PqpyTaFDcW5djJjj5nlDWPke1a";
-  const pteroServerId = "f0d45844";
 
   const KITS = [
     'sword','diamondpot','axe','nethpot','bedpvp','smp','diasmp',
@@ -27,17 +26,7 @@ export async function onRequest(context) {
     return 'Coal';
   }
 
-  function generateUuid(name) {
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-      hash = (hash << 5) - hash + name.charCodeAt(i);
-      hash |= 0;
-    }
-    const hex = Math.abs(hash).toString(16).padStart(8, '0');
-    return `${hex}-0000-4000-8000-${hex.repeat(2).substring(0, 12)}`;
-  }
-
-  function computeKitPoints(name, baseElo) {
+  function computeKitPoints(name, baseElo, kitEloMap = {}) {
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
       hash = ((hash << 5) - hash) + name.charCodeAt(i);
@@ -53,65 +42,58 @@ export async function onRequest(context) {
 
     const pts = { overall: baseElo };
     KITS.forEach((k, idx) => {
-      const r = rng(100 + idx * 17);
-      const variance = (r() * 0.3) - 0.15;
-      pts[k] = Math.min(3100, Math.max(300, Math.round((baseElo * (1 + variance)) / 10) * 10));
+      if (kitEloMap[k]) {
+        pts[k] = kitEloMap[k];
+      } else {
+        const r = rng(100 + idx * 17);
+        const variance = (r() * 0.3) - 0.15;
+        pts[k] = Math.min(3100, Math.max(300, Math.round((baseElo * (1 + variance)) / 10) * 10));
+      }
     });
     return pts;
   }
 
-  try {
-    const res = await fetch(`${pteroUrl}/api/client/servers/${pteroServerId}/files/contents?file=plugins/StrikePractice/top_stats_cache.json`, {
-      headers: { "Authorization": `Bearer ${pteroKey}`, "Accept": "application/json" }
-    });
+  const found = cachedPlayers.find(p => p.name.toLowerCase() === nameParam);
+  if (found) {
+    const kills = found.kills || 0;
+    const deaths = found.deaths || 0;
+    const wins = found.wins || 0;
+    const losses = found.losses || 0;
 
-    if (res.ok) {
-      const data = await res.json();
-      const kills = Math.round(data.kills?.[nameParam] || 0);
-      const deaths = Math.round(data.deaths?.[nameParam] || 0);
-      let elo = Math.round(data.global_elo?.[nameParam] || 1000);
-      if (elo === 1000 && kills > 0) {
-        elo = Math.min(2850, 1000 + Math.floor(kills * 3.5) - Math.floor(deaths * 1.5));
-      }
-
-      const wins = Math.round(data.party_vs_party_wins?.[nameParam] || Math.max(0, Math.floor(kills * 0.7)));
-      const losses = Math.max(0, Math.floor(deaths * 0.7));
-      const total = wins + losses;
-      const winRate = total > 0 ? parseFloat(((wins / total) * 100).toFixed(1)) : 0;
-      const kd = deaths > 0 ? parseFloat((kills / deaths).toFixed(2)) : kills;
-
-      const pts = computeKitPoints(nameParam, elo);
-
-      const profile = {
-        uuid: generateUuid(nameParam),
-        name: nameParam,
-        elo,
-        tier: getRankTier(elo),
-        pts,
-        wins,
-        losses,
-        winStreak: Math.max(1, Math.floor(kills / 15)),
-        bestWinStreak: Math.max(2, Math.floor(kills / 8)),
-        kills,
-        deaths,
-        winRate,
-        kd,
-        kitRatings: [
-          { kit: 'nethpot', elo: pts.nethpot || elo, wins: Math.floor(wins * 0.45) },
-          { kit: 'spearmace', elo: pts.spearmace || elo, wins: Math.floor(wins * 0.35) },
-          { kit: 'crystal', elo: pts.crystal || elo, wins: Math.floor(wins * 0.2) },
-        ]
-      };
-
-      return new Response(JSON.stringify(profile), {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Cache-Control": "public, max-age=15"
-        }
-      });
+    let elo = found.elo || 1000;
+    if (wins > 0 || kills > 0) {
+      elo = Math.min(2850, 1000 + (wins * 35) + Math.floor(kills * 12) - Math.floor(deaths * 6));
     }
-  } catch (e) {}
+
+    const total = wins + losses;
+    const winRate = total > 0 ? parseFloat(((wins / total) * 100).toFixed(1)) : 0;
+    const kd = deaths > 0 ? parseFloat((kills / deaths).toFixed(2)) : kills;
+    const pts = computeKitPoints(found.name, elo, found.kitElo || {});
+
+    const profile = {
+      uuid: found.uuid,
+      name: found.name,
+      elo,
+      tier: getRankTier(elo),
+      pts,
+      wins,
+      losses,
+      winStreak: found.winStreak || (wins > 0 ? Math.max(1, Math.floor(wins / 3)) : 0),
+      bestWinStreak: found.bestWinStreak || (wins > 0 ? Math.max(2, Math.floor(wins / 2)) : 0),
+      kills,
+      deaths,
+      winRate,
+      kd
+    };
+
+    return new Response(JSON.stringify(profile), {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "public, max-age=15"
+      }
+    });
+  }
 
   return new Response(JSON.stringify({ error: "Player not found" }), { status: 404 });
 }

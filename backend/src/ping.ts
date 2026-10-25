@@ -55,7 +55,7 @@ export async function getServerStatus(): Promise<ServerStatusResponse> {
       let isOnline = fallbackResult.online;
       if (!isOnline) {
         try {
-          const pteroRes = await fetch('https://mccanvas.setotower.com/api/client/servers/f0d45844/resources', {
+          const pteroRes = await fetch('https://mccanvas.setotower.com/api/client/servers/f40a8e96/resources', {
             headers: {
               'Authorization': 'Bearer ptlc_hQYFMoUjQRR1OGG79PqpyTaFDcW5djJjj5nlDWPke1a',
               'Accept': 'application/json'
@@ -80,7 +80,7 @@ export async function getServerStatus(): Promise<ServerStatusResponse> {
       // Check Pterodactyl container state
       let pteroRunning = false;
       try {
-        const pteroRes = await fetch('https://mccanvas.setotower.com/api/client/servers/f0d45844/resources', {
+        const pteroRes = await fetch('https://mccanvas.setotower.com/api/client/servers/f40a8e96/resources', {
           headers: {
             'Authorization': 'Bearer ptlc_hQYFMoUjQRR1OGG79PqpyTaFDcW5djJjj5nlDWPke1a',
             'Accept': 'application/json'
