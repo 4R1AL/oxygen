@@ -7,9 +7,10 @@ dotenv.config();
 export interface PlayerStats {
   uuid: string;
   name: string;
-  elo: number;
+  elo: number | null;
   tier: string;
-  pts?: Record<string, number>;
+  isRanked?: boolean;
+  pts?: Record<string, number | null>;
   wins: number;
   losses: number;
   winStreak: number;
@@ -23,8 +24,9 @@ export interface PlayerStats {
 
 export interface KitElo {
   kit: string;
-  elo: number;
+  elo: number | null;
   wins: number;
+  tier: string;
 }
 
 export interface PlayerProfile extends PlayerStats {
@@ -33,7 +35,7 @@ export interface PlayerProfile extends PlayerStats {
 
 export interface LeaderboardEntry extends PlayerStats {
   rank: number;
-  score: number;
+  score: number | null;
 }
 
 export interface KitInfo {
@@ -55,7 +57,8 @@ export interface ArenaInfo {
 // ------------------------------------------------------------------------------
 // EXACT RANK TIERS DEFINED IN Oxygen.jar (com.oxygen.duel.elo.EloRank)
 // ------------------------------------------------------------------------------
-export function getRankTier(elo: number): string {
+export function getRankTier(elo: number | null | undefined): string {
+  if (elo === null || elo === undefined) return 'Unranked';
   if (elo >= 3100) return 'Bedrock';
   if (elo >= 3000) return 'Radiant 3';
   if (elo >= 2900) return 'Radiant 2';
@@ -135,7 +138,7 @@ export function isDatabaseHealthy(): boolean {
 /**
  * Fetch top leaderboard entries.
  * Strictly separates gamemode Elo from overall Elo.
- * Uses exact server data with 0 artificial multipliers.
+ * If player has not played a gamemode, they are unranked with no Elo.
  */
 export async function getTopLeaderboard(
   kitName = 'overall',
@@ -146,8 +149,79 @@ export async function getTopLeaderboard(
   const rawPlayers = loadOxygenCache();
   const normalizedRequestedKit = normalizeKit(kitName);
 
+  if (normalizedRequestedKit !== 'overall') {
+    // Only return players who have ACTUALLY played this kit
+    const kitEntries: LeaderboardEntry[] = [];
+
+    for (const p of rawPlayers) {
+      const kitEloNormalized: Record<string, number> = {};
+      for (const [k, v] of Object.entries(p.kitElo || {})) {
+        kitEloNormalized[normalizeKit(k)] = v as number;
+      }
+
+      if (kitEloNormalized[normalizedRequestedKit] !== undefined) {
+        const kitElo = kitEloNormalized[normalizedRequestedKit];
+        const kills = p.kills || 0;
+        const deaths = p.deaths || 0;
+        const wins = p.wins || 0;
+        const losses = p.losses || 0;
+        const kd = deaths > 0 ? parseFloat((kills / deaths).toFixed(2)) : kills;
+        const totalMatches = wins + losses;
+        const winRate = totalMatches > 0 ? parseFloat(((wins / totalMatches) * 100).toFixed(1)) : 0.0;
+
+        const pts: Record<string, number | null> = { overall: p.elo || 1000 };
+        for (const kit of OFFICIAL_KITS) {
+          if (kitEloNormalized[kit] !== undefined) {
+            pts[kit] = kitEloNormalized[kit];
+          }
+        }
+
+        let score: number = kitElo;
+        if (sortType === 'kills') score = kills;
+        else if (sortType === 'wins') score = wins;
+        else if (sortType === 'streak') score = p.winStreak || 0;
+
+        kitEntries.push({
+          rank: 0,
+          uuid: p.uuid,
+          name: p.name,
+          score,
+          elo: p.elo || 1000,
+          isRanked: true,
+          tier: getRankTier(score),
+          pts,
+          wins,
+          losses,
+          winStreak: p.winStreak || 0,
+          bestWinStreak: p.bestWinStreak || 0,
+          kills,
+          deaths,
+          winRate,
+          kd,
+        });
+      }
+    }
+
+    if (sortType === 'kills') {
+      kitEntries.sort((a, b) => b.kills - a.kills || b.wins - a.wins);
+    } else if (sortType === 'wins') {
+      kitEntries.sort((a, b) => b.wins - a.wins || b.kills - a.kills);
+    } else if (sortType === 'streak') {
+      kitEntries.sort((a, b) => b.winStreak - a.winStreak || b.wins - a.wins);
+    } else {
+      kitEntries.sort((a, b) => ((b.score || 0) - (a.score || 0)) || (b.wins - a.wins) || (b.kills - a.kills));
+    }
+
+    kitEntries.forEach((e, idx) => {
+      e.rank = idx + 1;
+    });
+
+    return kitEntries.slice(0, safeLimit);
+  }
+
+  // Overall: Ranked duelists first, then unranked
   const entries: LeaderboardEntry[] = rawPlayers.map((p) => {
-    const overallElo = p.elo || 1000;
+    const hasMatches = (p.wins || 0) + (p.losses || 0) > 0 || (p.kills || 0) > 0 || Object.keys(p.kitElo || {}).length > 0;
     const kills = p.kills || 0;
     const deaths = p.deaths || 0;
     const wins = p.wins || 0;
@@ -156,8 +230,9 @@ export async function getTopLeaderboard(
     const totalMatches = wins + losses;
     const winRate = totalMatches > 0 ? parseFloat(((wins / totalMatches) * 100).toFixed(1)) : 0.0;
 
-    // Build kit points map
-    const pts: Record<string, number> = { overall: overallElo };
+    const overallElo = hasMatches ? (p.elo || 1000) : null;
+
+    const pts: Record<string, number | null> = { overall: overallElo };
     const kitEloNormalized: Record<string, number> = {};
     for (const [k, v] of Object.entries(p.kitElo || {})) {
       kitEloNormalized[normalizeKit(k)] = v as number;
@@ -166,16 +241,10 @@ export async function getTopLeaderboard(
     for (const kit of OFFICIAL_KITS) {
       if (kitEloNormalized[kit] !== undefined) {
         pts[kit] = kitEloNormalized[kit];
-      } else {
-        pts[kit] = 1000; // Oxygen server default
       }
     }
 
-    // Determine score based on requested kit and sortType
-    let score = (normalizedRequestedKit !== 'overall' && pts[normalizedRequestedKit] !== undefined)
-      ? pts[normalizedRequestedKit]
-      : overallElo;
-
+    let score: number | null = overallElo;
     if (sortType === 'kills') score = kills;
     else if (sortType === 'wins') score = wins;
     else if (sortType === 'streak') score = p.winStreak || 0;
@@ -186,7 +255,8 @@ export async function getTopLeaderboard(
       name: p.name,
       score,
       elo: overallElo,
-      tier: getRankTier(score),
+      isRanked: hasMatches,
+      tier: hasMatches ? getRankTier(overallElo) : 'Unranked',
       pts,
       wins,
       losses,
@@ -199,27 +269,20 @@ export async function getTopLeaderboard(
     };
   });
 
-  // Sort strictly by requested criterion
-  if (sortType === 'kills') {
-    entries.sort((a, b) => b.kills - a.kills || b.wins - a.wins);
-  } else if (sortType === 'wins') {
-    entries.sort((a, b) => b.wins - a.wins || b.kills - a.kills);
-  } else if (sortType === 'streak') {
-    entries.sort((a, b) => b.winStreak - a.winStreak || b.wins - a.wins);
-  } else if (normalizedRequestedKit !== 'overall') {
-    entries.sort((a, b) => {
-      const pB = (b.pts && b.pts[normalizedRequestedKit] !== undefined) ? b.pts[normalizedRequestedKit] : 1000;
-      const pA = (a.pts && a.pts[normalizedRequestedKit] !== undefined) ? a.pts[normalizedRequestedKit] : 1000;
-      if (pB !== pA) return pB - pA;
-      if (b.wins !== a.wins) return b.wins - a.wins;
-      return b.kills - a.kills;
-    });
-  } else {
-    entries.sort((a, b) => (b.elo - a.elo) || (b.wins - a.wins) || (b.kills - a.kills));
-  }
+  entries.sort((a, b) => {
+    if (a.isRanked && !b.isRanked) return -1;
+    if (!a.isRanked && b.isRanked) return 1;
+    if (a.isRanked && b.isRanked) {
+      if (sortType === 'kills') return b.kills - a.kills;
+      if (sortType === 'wins') return b.wins - a.wins;
+      if (sortType === 'streak') return b.winStreak - a.winStreak;
+      return ((b.elo || 0) - (a.elo || 0)) || (b.wins - a.wins) || (b.kills - a.kills);
+    }
+    return a.name.localeCompare(b.name);
+  });
 
   entries.forEach((e, idx) => {
-    e.rank = idx + 1;
+    e.rank = e.isRanked ? (idx + 1) : 0;
   });
 
   return entries.slice(0, safeLimit);
@@ -230,25 +293,61 @@ export async function getTopLeaderboard(
  */
 export async function getPlayerProfile(nameOrUuid: string): Promise<PlayerProfile | null> {
   if (!nameOrUuid) return null;
-  const leaderboard = await getTopLeaderboard('overall', 'elo', 200);
-  const found = leaderboard.find(
+  const rawCache = loadOxygenCache();
+  const rawPlayer = rawCache.find(
     (p) => p.name.toLowerCase() === nameOrUuid.toLowerCase() || p.uuid.toLowerCase() === nameOrUuid.toLowerCase()
   );
 
-  if (!found) return null;
+  if (!rawPlayer) return null;
 
-  const rawCache = loadOxygenCache();
-  const rawPlayer = rawCache.find((p) => p.uuid === found.uuid || p.name.toLowerCase() === found.name.toLowerCase());
-  const kitWinsMap: Record<string, number> = rawPlayer?.kitWins || {};
+  const hasMatches = (rawPlayer.wins || 0) + (rawPlayer.losses || 0) > 0 || (rawPlayer.kills || 0) > 0 || Object.keys(rawPlayer.kitElo || {}).length > 0;
+  const overallElo = hasMatches ? (rawPlayer.elo || 1000) : null;
+  const kills = rawPlayer.kills || 0;
+  const deaths = rawPlayer.deaths || 0;
+  const wins = rawPlayer.wins || 0;
+  const losses = rawPlayer.losses || 0;
+  const kd = deaths > 0 ? parseFloat((kills / deaths).toFixed(2)) : kills;
+  const totalMatches = wins + losses;
+  const winRate = totalMatches > 0 ? parseFloat(((wins / totalMatches) * 100).toFixed(1)) : 0.0;
 
-  const kitRatings: KitElo[] = OFFICIAL_KITS.map((kit) => ({
-    kit,
-    elo: (found.pts && found.pts[kit] !== undefined) ? found.pts[kit] : 1000,
-    wins: kitWinsMap[kit] || kitWinsMap[normalizeKit(kit)] || 0,
-  }));
+  const kitEloNormalized: Record<string, number> = {};
+  for (const [k, v] of Object.entries(rawPlayer.kitElo || {})) {
+    kitEloNormalized[normalizeKit(k)] = v as number;
+  }
+  const kitWinsMap: Record<string, number> = rawPlayer.kitWins || {};
+
+  const pts: Record<string, number | null> = { overall: overallElo };
+  for (const kit of OFFICIAL_KITS) {
+    if (kitEloNormalized[kit] !== undefined) {
+      pts[kit] = kitEloNormalized[kit];
+    }
+  }
+
+  const kitRatings: KitElo[] = OFFICIAL_KITS.map((kit) => {
+    const elo = kitEloNormalized[kit] !== undefined ? kitEloNormalized[kit] : null;
+    return {
+      kit,
+      elo,
+      wins: kitWinsMap[kit] || kitWinsMap[normalizeKit(kit)] || 0,
+      tier: getRankTier(elo),
+    };
+  });
 
   return {
-    ...found,
+    uuid: rawPlayer.uuid,
+    name: rawPlayer.name,
+    elo: overallElo,
+    tier: hasMatches ? getRankTier(overallElo) : 'Unranked',
+    isRanked: hasMatches,
+    pts,
+    wins,
+    losses,
+    winStreak: rawPlayer.winStreak || 0,
+    bestWinStreak: rawPlayer.bestWinStreak || 0,
+    kills,
+    deaths,
+    winRate,
+    kd,
     kitRatings,
   };
 }
