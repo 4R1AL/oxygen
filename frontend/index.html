@@ -559,7 +559,7 @@ async function showP(n,el){
     if(!p) return;
 
     // Fetch deep profile from Oxygen backend API if available
-    const apiBase = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.apiBaseUrl : 'http://localhost:3001';
+    const apiBase = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.apiBaseUrl : '';
     let realProfile = null;
     try {
         const res = await fetch(`${apiBase}/api/player/${encodeURIComponent(n)}`, { signal: AbortSignal.timeout(2000) });
@@ -659,7 +659,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-r],[data-n
 // 5. OXYGEN DUEL REST API & PTERODACTYL DB SYNCHRONIZATION
 // ==============================================================================
 async function syncWithOxygenApi(){
-    const apiBase = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.apiBaseUrl : 'http://localhost:3001';
+    const apiBase = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.apiBaseUrl : '';
     const serverIp = window.OXYGEN_CONFIG ? window.OXYGEN_CONFIG.serverIp : 'play.samratnagarkoti.com.np';
 
     // 1. Sync live server status

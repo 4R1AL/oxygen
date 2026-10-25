@@ -2,6 +2,9 @@
 node_modules/
 dist/
 build/
+*.zip
+*.tar.gz
+*.tgz
 
 # Environment Variables
 .env

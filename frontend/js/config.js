@@ -1,20 +1,19 @@
 /**
- * Oxygen PvP Frontend Configuration
- * Configure your backend REST API URL here.
+ * Oxygen PvP Nepal - Frontend Configuration
  */
 const CONFIG = {
   // Brand details
-  serverName: "Oxygen PvP",
+  serverName: "Oxygen PvP Nepal",
   serverIp: "play.samratnagarkoti.com.np",
   discordUrl: "https://discord.gg/",
   storeUrl: "https://store.samratnagarkoti.com.np",
 
-  // Primary backend REST API URL.
-  // In production with Cloudflare: set this to your backend domain (e.g. 'https://api.samratnagarkoti.com.np')
-  // In development: defaults to localhost:3001
-  apiBaseUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  // API Base URL:
+  // When deployed on Cloudflare Pages, functions are served directly under /api/*
+  // In local development, falls back to http://localhost:3001 if testing standalone Node server
+  apiBaseUrl: (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '8788')
     ? 'http://localhost:3001'
-    : 'https://api.samratnagarkoti.com.np',
+    : '',
 
   // Fallback to local / mock data if API is currently unreachable
   fallbackEnabled: true,
@@ -23,7 +22,7 @@ const CONFIG = {
   refreshIntervalMs: 12000,
 };
 
-// Allow overriding via localStorage for easy testing without modifying code
+// Allow overriding via localStorage for testing
 if (typeof localStorage !== 'undefined' && localStorage.getItem('oxygen_api_url')) {
   CONFIG.apiBaseUrl = localStorage.getItem('oxygen_api_url');
 }
