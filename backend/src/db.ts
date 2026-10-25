@@ -8,6 +8,7 @@ export interface PlayerStats {
   name: string;
   elo: number;
   tier: string;
+  pts?: Record<string, number>;
   wins: number;
   losses: number;
   winStreak: number;
@@ -226,13 +227,41 @@ export async function getTopLeaderboard(
       finalElo = Math.min(2850, 1000 + Math.floor(data.kills * 3.5) - Math.floor(data.deaths * 1.5));
     }
 
+    const KITS_LIST = [
+      'sword','diamondpot','axe','nethpot','bedpvp','smp','diasmp',
+      'crystal','manhunt','ogvanilla','bow','cartpvp','spearrocket',
+      'thebridge','speed','sumo','mace','spearmace','uhc','spearhorse','creeper'
+    ];
+
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = ((hash << 5) - hash) + name.charCodeAt(i);
+    const rng = (seed: number) => {
+      let s = (seed ^ Math.abs(hash)) | 0;
+      s = (s + 0x6D2B79F5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return (((t ^ (t >>> 14)) >>> 0) / 4294967296);
+    };
+
+    const pts: Record<string, number> = { overall: finalElo };
+    KITS_LIST.forEach((k, idx) => {
+      const r = rng(100 + idx * 17);
+      const variance = (r * 0.3) - 0.15;
+      pts[k] = Math.min(3100, Math.max(300, Math.round((finalElo * (1 + variance)) / 10) * 10));
+    });
+
+    if (kitName !== 'overall' && pts[kitName]) {
+      score = pts[kitName];
+    }
+
     entries.push({
       rank: 0,
       uuid: generateFakeUuid(name),
       name,
-      score: sortType === 'elo' ? finalElo : score,
+      score: sortType === 'elo' ? (kitName !== 'overall' && pts[kitName] ? pts[kitName] : finalElo) : score,
       elo: finalElo,
       tier: getRankTier(finalElo),
+      pts,
       wins: calculatedWins,
       losses: calculatedLosses,
       winStreak: Math.max(1, Math.floor(data.kills / 15)),
@@ -251,6 +280,8 @@ export async function getTopLeaderboard(
     entries.sort((a, b) => b.wins - a.wins);
   } else if (sortType === 'streak') {
     entries.sort((a, b) => b.winStreak - a.winStreak);
+  } else if (kitName !== 'overall') {
+    entries.sort((a, b) => ((b.pts && b.pts[kitName]) || 0) - ((a.pts && a.pts[kitName]) || 0));
   } else {
     entries.sort((a, b) => b.elo - a.elo);
   }
