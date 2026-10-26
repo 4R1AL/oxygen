@@ -8,7 +8,7 @@ Modern, esports-themed web integration for the **Oxygen Minecraft Duel Plugin**,
 
 ```
                         ┌───────────────────────────────────────┐
-                        │      mcnp.network           │
+                        │      mcnp.network                     │
                         │    (Cloudflare Pages CDN)             │
                         │   - Live Leaderboard (Elo, Wins)      │
                         │   - Kits & Arenas Showcase            │
@@ -18,7 +18,7 @@ Modern, esports-themed web integration for the **Oxygen Minecraft Duel Plugin**,
                                            │  REST API Calls
                                            ▼
                         ┌───────────────────────────────────────┐
-                        │       api.mcnp.network      │
+                        │       api.mcnp.network                │
                         │      (Oxygen REST API Backend)        │
                         │   - Node.js / Express / TypeScript    │
                         │   - Server List Ping (SLP) Socket     │
