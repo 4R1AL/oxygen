@@ -72,6 +72,100 @@ function persistStoreToDisk() {
       }
     } catch (e) {}
   }
+
+  // Format duelists for frontend and Cloudflare Pages leaderboard function
+  try {
+    const formatted = list.map(p => {
+      const kitElo = p.kitElo || {};
+      const playedKits = Object.keys(kitElo);
+      const isRanked = playedKits.length > 0 && p.elo !== null;
+      const wins = p.wins || 0;
+      const losses = p.losses || 0;
+      const kills = p.kills || 0;
+      const deaths = p.deaths || 0;
+      const kd = deaths > 0 ? +(kills / deaths).toFixed(2) : kills;
+      const winRate = (wins + losses) > 0 ? +((wins / (wins + losses)) * 100).toFixed(1) : 0;
+
+      return {
+        n: p.name,
+        uuid: p.uuid,
+        name: p.name,
+        elo: p.elo,
+        isRanked,
+        pts: kitElo,
+        kills,
+        deaths,
+        kd,
+        wins,
+        losses,
+        winRate,
+        winStreak: p.winStreak || 0,
+        bestWinStreak: p.bestWinStreak || 0
+      };
+    });
+
+    formatted.sort((a, b) => {
+      if (a.isRanked && !b.isRanked) return -1;
+      if (!a.isRanked && b.isRanked) return 1;
+      if (a.isRanked && b.isRanked) return (b.elo || 0) - (a.elo || 0);
+      return a.name.localeCompare(b.name);
+    });
+
+    const jsonStr = JSON.stringify(formatted, null, 2);
+
+    // Update leaderboard.js in both functions/api and frontend/functions/api
+    const lbPaths = [
+      path.resolve(process.cwd(), '../functions/api/leaderboard.js'),
+      path.resolve(process.cwd(), 'functions/api/leaderboard.js'),
+      path.resolve(process.cwd(), '../frontend/functions/api/leaderboard.js'),
+      path.resolve(process.cwd(), 'frontend/functions/api/leaderboard.js'),
+    ];
+
+    for (const lbPath of lbPaths) {
+      if (fs.existsSync(lbPath)) {
+        try {
+          const lbContent = fs.readFileSync(lbPath, 'utf8');
+          const reqMatch = lbContent.indexOf('export async function onRequest');
+          if (reqMatch !== -1) {
+            const reqCode = lbContent.slice(reqMatch);
+            const newContent = '// Cloudflare Pages Function - Live Oxygen Duels Leaderboard\nconst exactPlayers = ' + jsonStr + ';\n\n' + reqCode;
+            fs.writeFileSync(lbPath, newContent, 'utf8');
+          }
+        } catch (e) {}
+      }
+    }
+
+    // Update frontend/index.html PL array
+    const indexPaths = [
+      path.resolve(process.cwd(), '../frontend/index.html'),
+      path.resolve(process.cwd(), 'frontend/index.html'),
+    ];
+
+    for (const indexPath of indexPaths) {
+      if (fs.existsSync(indexPath)) {
+        try {
+          const indexHtml = fs.readFileSync(indexPath, 'utf8');
+          const plStart = indexHtml.indexOf('let PL = [');
+          const plEnd = indexHtml.indexOf('];\nfunction mkHead(n){');
+          if (plStart !== -1 && plEnd !== -1) {
+            const updatedHtml = indexHtml.slice(0, plStart) + 'let PL = ' + jsonStr + indexHtml.slice(plEnd + 1);
+            fs.writeFileSync(indexPath, updatedHtml, 'utf8');
+
+            // Also keep Documents HTML copies updated if present
+            const docPaths = [
+              '/Users/samrat/Documents/Minecraft Nepal Ranks (1).html',
+              '/Users/samrat/Documents/Minecraft Nepal Ranks.html',
+            ];
+            for (const dp of docPaths) {
+              if (fs.existsSync(dp)) {
+                try { fs.writeFileSync(dp, updatedHtml, 'utf8'); } catch (err) {}
+              }
+            }
+          }
+        } catch (e) {}
+      }
+    }
+  } catch (err) {}
 }
 
 export function getAllCachedPlayers(): OxygenCachedPlayer[] {

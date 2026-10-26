@@ -185,7 +185,7 @@
     "bestWinStreak": 0,
     "kills": 0,
     "deaths": 0,
-    "lastModified": "2026-10-20T00:47:11+00:00"
+    "lastModified": "2026-10-25T20:13:03+00:00"
   },
   {
     "uuid": "2e0dcb7c-b86a-3ea8-8015-46bc59b686bd",
@@ -213,7 +213,7 @@
     "bestWinStreak": 0,
     "kills": 0,
     "deaths": 6,
-    "lastModified": "2026-10-22T04:11:40+00:00"
+    "lastModified": "2026-10-25T16:54:46+00:00"
   },
   {
     "uuid": "357e349d-a57b-364e-92ca-62fa016c13cb",
@@ -363,15 +363,17 @@
       "creeper": 1013
     },
     "kitWins": {
-      "creeper": 2
+      "creeper": 2,
+      "crystal": 2,
+      "sword": 1
     },
-    "wins": 2,
+    "wins": 5,
     "losses": 0,
-    "winStreak": 2,
-    "bestWinStreak": 2,
-    "kills": 2,
+    "winStreak": 5,
+    "bestWinStreak": 5,
+    "kills": 9,
     "deaths": 0,
-    "lastModified": "2026-10-23T18:39:52+00:00"
+    "lastModified": "2026-10-25T17:09:33+00:00"
   },
   {
     "uuid": "598a8044-1074-39e4-aea9-128f8709ca1e",
@@ -655,12 +657,12 @@
       "crystal": 2
     },
     "wins": 10,
-    "losses": 12,
-    "winStreak": 2,
+    "losses": 15,
+    "winStreak": 0,
     "bestWinStreak": 7,
     "kills": 24,
-    "deaths": 30,
-    "lastModified": "2026-10-25T04:36:43+00:00"
+    "deaths": 37,
+    "lastModified": "2026-10-25T17:09:33+00:00"
   },
   {
     "uuid": "b9becedf-37a6-3766-b133-72e838ac376f",
@@ -1189,5 +1191,33 @@
     "kills": 0,
     "deaths": 0,
     "lastModified": "2026-10-25T16:38:01+00:00"
+  },
+  {
+    "uuid": "95be320c-28ed-3f7c-bf50-e858fd41ac28",
+    "name": "AAKASH2332",
+    "elo": null,
+    "kitElo": {},
+    "kitWins": {},
+    "wins": 0,
+    "losses": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0,
+    "kills": 0,
+    "deaths": 0,
+    "lastModified": "2026-10-26T01:53:43+00:00"
+  },
+  {
+    "uuid": "86fff73f-e516-3f6a-9c02-7f0343e189c5",
+    "name": "liluzi903",
+    "elo": null,
+    "kitElo": {},
+    "kitWins": {},
+    "wins": 0,
+    "losses": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0,
+    "kills": 0,
+    "deaths": 0,
+    "lastModified": "2026-10-25T18:55:13+00:00"
   }
 ]

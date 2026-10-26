@@ -7,7 +7,6 @@ const exactPlayers = [
     "elo": 1050,
     "isRanked": true,
     "pts": {
-      "overall": 1050,
       "sword": 1050
     },
     "kills": 13,
@@ -26,9 +25,8 @@ const exactPlayers = [
     "elo": 1021,
     "isRanked": true,
     "pts": {
-      "overall": 1021,
-      "ogvanilla": 1014,
-      "creeper": 1027
+      "creeper": 1027,
+      "ogvanilla": 1014
     },
     "kills": 6,
     "deaths": 0,
@@ -40,23 +38,40 @@ const exactPlayers = [
     "bestWinStreak": 6
   },
   {
+    "n": "iLT3",
+    "uuid": "eb87fa6a-2908-3ecd-8444-e1d250c7bb5c",
+    "name": "iLT3",
+    "elo": 1014,
+    "isRanked": true,
+    "pts": {
+      "spearmace": 1014
+    },
+    "kills": 1,
+    "deaths": 0,
+    "kd": 1,
+    "wins": 1,
+    "losses": 0,
+    "winRate": 100,
+    "winStreak": 1,
+    "bestWinStreak": 1
+  },
+  {
     "n": "UjwalRai",
     "uuid": "56f8daa9-a0ba-41dc-bd22-ecee60d12157",
     "name": "UjwalRai",
     "elo": 1013,
     "isRanked": true,
     "pts": {
-      "overall": 1013,
       "creeper": 1013
     },
-    "kills": 2,
+    "kills": 9,
     "deaths": 0,
-    "kd": 2,
-    "wins": 2,
+    "kd": 9,
+    "wins": 5,
     "losses": 0,
     "winRate": 100,
-    "winStreak": 2,
-    "bestWinStreak": 2
+    "winStreak": 5,
+    "bestWinStreak": 5
   },
   {
     "n": "NotCrateofficial",
@@ -65,7 +80,6 @@ const exactPlayers = [
     "elo": 1012,
     "isRanked": true,
     "pts": {
-      "overall": 1012,
       "sword": 1012
     },
     "kills": 21,
@@ -84,18 +98,35 @@ const exactPlayers = [
     "elo": 989,
     "isRanked": true,
     "pts": {
-      "overall": 989,
       "sword": 950,
       "creeper": 1027
     },
     "kills": 24,
-    "deaths": 30,
-    "kd": 0.8,
+    "deaths": 37,
+    "kd": 0.65,
     "wins": 10,
-    "losses": 12,
-    "winRate": 45.5,
-    "winStreak": 2,
+    "losses": 15,
+    "winRate": 40,
+    "winStreak": 0,
     "bestWinStreak": 7
+  },
+  {
+    "n": "PrimeLucifer",
+    "uuid": "984ba0c4-aa7b-3f97-9c81-96fd62fbbb16",
+    "name": "PrimeLucifer",
+    "elo": 986,
+    "isRanked": true,
+    "pts": {
+      "spearmace": 986
+    },
+    "kills": 0,
+    "deaths": 1,
+    "kd": 0,
+    "wins": 0,
+    "losses": 1,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
   },
   {
     "n": "Mathsikni",
@@ -104,9 +135,8 @@ const exactPlayers = [
     "elo": 980,
     "isRanked": true,
     "pts": {
-      "overall": 980,
-      "ogvanilla": 986,
-      "creeper": 973
+      "creeper": 973,
+      "ogvanilla": 986
     },
     "kills": 0,
     "deaths": 8,
@@ -124,9 +154,8 @@ const exactPlayers = [
     "elo": 971,
     "isRanked": true,
     "pts": {
-      "overall": 971,
-      "sword": 969,
-      "creeper": 973
+      "creeper": 973,
+      "sword": 969
     },
     "kills": 8,
     "deaths": 11,
@@ -202,9 +231,57 @@ const exactPlayers = [
     "bestWinStreak": 0
   },
   {
+    "n": "AAKASH2332",
+    "uuid": "95be320c-28ed-3f7c-bf50-e858fd41ac28",
+    "name": "AAKASH2332",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
     "n": "Abhishekffll",
     "uuid": "f3e42cc5-3086-3375-9823-5b1da067c1a8",
     "name": "Abhishekffll",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
+    "n": "abineyyyyy",
+    "uuid": "ff35f2f0-8da8-3fac-a867-acabcf883ced",
+    "name": "abineyyyyy",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
+    "n": "Ace9023",
+    "uuid": "b0704471-62a9-3a76-a385-1355cacb11e7",
+    "name": "Ace9023",
     "elo": null,
     "isRanked": false,
     "pts": {},
@@ -237,6 +314,22 @@ const exactPlayers = [
     "n": "alex",
     "uuid": "bf20048c-a55a-322c-a100-5493e7b87286",
     "name": "alex",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
+    "n": "Andr0_0meda",
+    "uuid": "0cd72ea4-b7c2-37fd-851b-c21d2a187fc4",
+    "name": "Andr0_0meda",
     "elo": null,
     "isRanked": false,
     "pts": {},
@@ -330,6 +423,22 @@ const exactPlayers = [
     "bestWinStreak": 0
   },
   {
+    "n": "CST69",
+    "uuid": "e67bdeb8-703d-3bc0-a2de-530e5bf3cbed",
+    "name": "CST69",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
     "n": "d0n",
     "uuid": "c21a2e9c-cf47-303d-a0f7-5139065c585d",
     "name": "d0n",
@@ -381,6 +490,22 @@ const exactPlayers = [
     "n": "Dark_loop",
     "uuid": "ff05246d-7725-4945-af4a-8f6740bf557b",
     "name": "Dark_loop",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
+    "n": "demon_111aadi",
+    "uuid": "7c242e2c-d4ab-32d6-99aa-11d198d1eb60",
+    "name": "demon_111aadi",
     "elo": null,
     "isRanked": false,
     "pts": {},
@@ -554,6 +679,22 @@ const exactPlayers = [
     "bestWinStreak": 0
   },
   {
+    "n": "liluzi903",
+    "uuid": "86fff73f-e516-3f6a-9c02-7f0343e189c5",
+    "name": "liluzi903",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
     "n": "Lokabhai09",
     "uuid": "2e0dcb7c-b86a-3ea8-8015-46bc59b686bd",
     "name": "Lokabhai09",
@@ -666,6 +807,22 @@ const exactPlayers = [
     "bestWinStreak": 0
   },
   {
+    "n": "NotAanshik_07",
+    "uuid": "dd94fd85-7953-3c0a-9bba-7804fe275f5b",
+    "name": "NotAanshik_07",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
     "n": "NotYourNep_",
     "uuid": "75ebcc0a-7b18-3994-8339-df32f921d87c",
     "name": "NotYourNep_",
@@ -762,6 +919,22 @@ const exactPlayers = [
     "bestWinStreak": 0
   },
   {
+    "n": "RELAXGGAMER9845",
+    "uuid": "9e8fea3a-6aa6-372f-8ebc-ca9e0d4a8cc2",
+    "name": "RELAXGGAMER9845",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
     "n": "rizan",
     "uuid": "0a0f89db-85f5-32a1-b06a-899788ed4e42",
     "name": "rizan",
@@ -845,6 +1018,22 @@ const exactPlayers = [
     "n": "Sanim_Op",
     "uuid": "b9becedf-37a6-3766-b133-72e838ac376f",
     "name": "Sanim_Op",
+    "elo": null,
+    "isRanked": false,
+    "pts": {},
+    "kills": 0,
+    "deaths": 0,
+    "kd": 0,
+    "wins": 0,
+    "losses": 0,
+    "winRate": 0,
+    "winStreak": 0,
+    "bestWinStreak": 0
+  },
+  {
+    "n": "secretishere",
+    "uuid": "7a8f4f19-3c72-3720-aa5b-2f2e4374584b",
+    "name": "secretishere",
     "elo": null,
     "isRanked": false,
     "pts": {},
