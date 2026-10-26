@@ -31,7 +31,7 @@ Modern, esports-themed web integration for the **Oxygen Minecraft Duel Plugin**,
              │     (MySQL/MariaDB)     │   │   (Paper MC + Oxygen)    │
              │   - oxygen_players      │   │ - Auto-syncs matches     │
              │   - oxygen_kits         │   │ - Writes Elo & stats     │
-             │   - oxygen_arenas       │   │ - play.samratnagarkoti...│
+             │   - oxygen_arenas       │   │ - mcnp.network           │
              └─────────────────────────┘   └──────────────────────────┘
 ```
 
