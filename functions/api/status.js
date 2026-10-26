@@ -42,6 +42,26 @@ export async function onRequest(context) {
     } catch (e) {}
   }
 
+  // Try 3: Direct Pterodactyl Container Heartbeat fallback
+  if (!online) {
+    try {
+      const pteroRes = await fetch("https://mccanvas.setotower.com/api/client/servers/f40a8e96/resources", {
+        headers: {
+          "Authorization": "Bearer ptlc_hQYFMoUjQRR1OGG79PqpyTaFDcW5djJjj5nlDWPke1a",
+          "Accept": "application/json"
+        },
+        signal: AbortSignal.timeout(3000)
+      });
+      if (pteroRes.ok) {
+        const pd = await pteroRes.json();
+        if (pd.attributes?.current_state === "running") {
+          online = true;
+          onlinePlayers = null;
+        }
+      }
+    } catch (e) {}
+  }
+
   return new Response(JSON.stringify({
     status: online ? "online" : "offline",
     online,

@@ -2132,6 +2132,18 @@ async function syncWithOxygenApi(){
             }
         } catch (e3) {}
 
+        // Fallback 3: mcstatus.io (CORS enabled)
+        try {
+            const res4 = await fetch('https://api.mcstatus.io/v2/status/java/mcnp.network', { signal: AbortSignal.timeout(3500) });
+            if (res4.ok) {
+                const d4 = await res4.json();
+                if (d4.online) {
+                    markOnline(d4.players ? d4.players.online : null);
+                    return;
+                }
+            }
+        } catch (e4) {}
+
         markOffline();
     })();
 
